@@ -37,19 +37,19 @@ export default function BookmarkletSaver({ url }: { url: string }) {
       {status === "saving" && (
         <>
           <div className="w-8 h-8 rounded-full border-2 border-[var(--accent)] border-t-transparent animate-spin" />
-          <p className="text-sm text-[var(--text-muted)]">Saving...</p>
+          <p className="text-sm text-[var(--text-muted)]">Saving…</p>
         </>
       )}
       {status === "saved" && (
         <>
           <div className="w-10 h-10 rounded-full bg-[var(--accent-soft)] flex items-center justify-center">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--accent)]">
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--accent)]">
               <polyline points="20 6 9 17 4 12" />
             </svg>
           </div>
           <p className="text-sm font-medium text-[var(--text)]">Saved to Ritro</p>
           <p className="text-xs text-[var(--text-dim)]">
-            {window.opener ? "This window will close..." : (
+            {window.opener ? "This window will close…" : (
               <a href="/app" className="text-[var(--accent)] hover:underline">View your bookmarks</a>
             )}
           </p>
@@ -58,7 +58,7 @@ export default function BookmarkletSaver({ url }: { url: string }) {
       {status === "duplicate" && (
         <>
           <div className="w-10 h-10 rounded-full bg-[var(--surface-2)] flex items-center justify-center">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--text-muted)]">
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--text-muted)]">
               <circle cx="12" cy="12" r="10" />
               <line x1="12" y1="8" x2="12" y2="12" />
               <line x1="12" y1="16" x2="12.01" y2="16" />
@@ -71,7 +71,7 @@ export default function BookmarkletSaver({ url }: { url: string }) {
       {status === "error" && (
         <>
           <div className="w-10 h-10 rounded-full bg-[var(--error-bg)] flex items-center justify-center">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--error)]">
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--error)]">
               <circle cx="12" cy="12" r="10" />
               <line x1="12" y1="8" x2="12" y2="12" />
               <line x1="12" y1="16" x2="12.01" y2="16" />

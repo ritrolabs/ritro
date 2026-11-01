@@ -75,10 +75,10 @@ export const EXAMPLES: ExampleSave[] = [
   },
 ];
 
+// "1 Sep 2025": en-GB's short month is "Sept", so take the month from en-US
 export function stampDate(date: Date) {
-  return date
-    .toLocaleDateString("en-GB", { timeZone: "UTC", day: "2-digit", month: "short", year: "numeric" })
-    .toUpperCase();
+  const part = (o: Intl.DateTimeFormatOptions) => date.toLocaleDateString("en-US", { timeZone: "UTC", ...o });
+  return `${part({ day: "numeric" })} ${part({ month: "short" })} ${part({ year: "numeric" })}`;
 }
 
 export function monthsBefore(iso: string, months: number) {

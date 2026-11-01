@@ -33,7 +33,7 @@ export default function ExtensionPage() {
       lead="The Ritro extension saves the current tab in one click, or with a keyboard shortcut without opening anything. It only runs when you click it, never on the pages you visit."
     >
       <section className="mt-16 grid gap-10 md:grid-cols-12">
-        <div className="reveal md:col-span-5">
+        <div className="reveal min-w-0 md:col-span-5">
           <h2 className="font-serif text-[clamp(1.75rem,3.5vw,2.5rem)] font-medium leading-tight tracking-[-0.02em]">
             Install it in a minute.
           </h2>
@@ -42,7 +42,7 @@ export default function ExtensionPage() {
             code. It works in Chrome, Edge, Brave and Arc.
           </p>
           <div className="mt-6 flex items-center gap-2 rounded-full border border-[var(--border-2)] bg-[var(--surface)] py-1.5 pl-4 pr-1.5 w-fit max-w-full">
-            <span className="truncate font-data text-[13px] text-[var(--text)]">git clone {GITHUB_URL}.git</span>
+            <span className="min-w-0 truncate font-data text-[13px] text-[var(--text)]">git clone {GITHUB_URL}.git</span>
             <CopyButton text={`git clone ${GITHUB_URL}.git`} />
           </div>
         </div>
@@ -80,7 +80,7 @@ export default function ExtensionPage() {
       </section>
 
       <section className="mt-28 grid gap-10 md:grid-cols-12">
-        <div className="reveal md:col-span-5">
+        <div className="reveal min-w-0 md:col-span-5">
           <h2 className="font-serif text-[clamp(1.75rem,3.5vw,2.5rem)] font-medium leading-tight tracking-[-0.02em]">
             Not on Chrome?
           </h2>

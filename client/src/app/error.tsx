@@ -11,10 +11,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
   return (
     <main className="flex min-h-screen items-center justify-center bg-[var(--bg)] px-5">
       <div className="max-w-md text-center">
-        <span className="date-stamp" style={{ transform: "rotate(-3deg)" }}>
-          Misfiled
-        </span>
-        <h1 className="mt-8 font-serif text-4xl font-medium tracking-[-0.02em] text-[var(--text)]">
+        <h1 className="font-serif text-4xl font-medium tracking-[-0.02em] text-[var(--text)]">
           Something went wrong on our side.
         </h1>
         <p className="mt-4 text-[16px] leading-relaxed text-[var(--text-muted)]">

@@ -100,7 +100,6 @@ typography:
     fontSize: "0.6875rem"
     fontWeight: 500
     lineHeight: 1.2
-    letterSpacing: "0.06em"
     fontFeature: "\"tnum\""
 rounded:
   stamp: "3px"
@@ -194,7 +193,7 @@ Light is the default and the reference; dark mode is a full sibling theme (warm 
 - Warm paper grounds with ink text; no pure white, no pure black.
 - One accent only: stamp violet, for the primary action, links, active filters, tags and date stamps.
 - Three type voices with fixed jobs: serif for headings and item titles, sans for UI and reading copy, mono only for dates, hostnames and counts.
-- The date stamp is the signature: an outlined, uppercase, slightly tilted mono label.
+- The Back stamp is the signature: an outlined, slightly tilted mono label, used only when a save returns.
 - Square-ish 6px corners on containers; full pills only for chips.
 - Hairline rules and paper tone over shadows.
 
@@ -246,7 +245,7 @@ Paper and ink with a single stamp pad violet; every text color passes WCAG AA on
 - **Body** (sans 400, 15 to 16px, relaxed 1.625 to 1.7, max 60ch): landing copy and legal articles in muted ink.
 - **UI** (sans 500, 14px): buttons, nav, inputs. Small UI and captions drop to 12px.
 - **Data** (mono 400, 11px, tabular): hostnames, slip numbers, keyboard shortcut keys.
-- **Stamp** (mono 500, 11px, uppercase, 0.06em tracking): date stamps; 10px on bookmark cards.
+- **Stamp** (mono 500, 11px, sentence case, untracked): the Back stamp only.
 
 ### Named Rules
 **The Three Voices Rule.** Serif speaks for content (headings, titles, labels in italic). Sans runs the interface. Mono is only for data: dates, hostnames, numbers, keys. Never set a button, a paragraph or a heading in mono.
@@ -284,7 +283,7 @@ Icons are Lucide style outline glyphs at stroke width 2 with round caps and join
 ### Buttons
 Quiet and confident; filled violet only for the one action that matters.
 - **Shape:** gently squared corners (6px).
-- **Primary:** stamp violet fill, on stamp text, 48px tall with 24px side padding on the landing (44px on 404 and error, 48px for the Save button), weight 500, optional trailing arrow that nudges 2px right on hover.
+- **Primary:** stamp violet fill, on stamp text, 48px tall with 24px side padding on the landing (44px on 404 and error, 48px for the Save button), weight 500, label only: no trailing arrow.
 - **Hover / Focus:** fill deepens to stamp violet deep over 150ms; focus shows the global 2px violet outline at 2px offset.
 - **Text link (secondary):** ink text, 4px underline offset in the strong rule color that turns violet on hover ("Add the extension", "Back to Ritro").
 - **Quiet:** transparent, muted ink, 32px tall, 12px padding; on hover the paper shade fills in and text goes to ink (header Settings, Log out, theme toggle, landing nav).
@@ -303,7 +302,7 @@ Quiet and confident; filled violet only for the one action that matters.
 - **Shadow Strategy:** none at rest; lift on hover (see Elevation).
 - **Border:** 1px rule, strengthening to the strong rule on hover.
 - **Internal Padding:** 16px (list card, save form), 20px (settings sections, dialog), 24px (auth card, slip).
-- **Bookmark card:** serif item title, optional two line muted description, then a row pairing the mono hostname with a SAVED date stamp, then tag chips with an inline add tag field. Delete and collection actions sit top right; delete appears on hover or keyboard focus.
+- **Bookmark card:** serif item title, optional two line muted description, then a row pairing the mono hostname with a relative saved date, then tag chips with an inline add tag field. Delete and collection actions sit top right; delete appears on hover or keyboard focus.
 
 ### Inputs / Fields
 - **Style:** raised paper fill, 1px strong rule border, 6px corners, 44 to 48px tall, 14px text, dim ink placeholder, violet caret.
@@ -317,19 +316,19 @@ Quiet and confident; filled violet only for the one action that matters.
 - **Footer:** hairline top, dim 14px text, wordmark in serif, links brighten to ink on hover.
 
 ### Date Stamp (signature)
-An outlined mono label in violet ink: uppercase, 0.06em tracked, 1.5px currentColor border, 3px corners, never filled. It is rotated a few degrees (about -3deg at rest) so it reads as hand stamped. It marks:
-- **SAVED dd MMM** on every bookmark card (year added when not the current year).
-- **SAVED** and **BACK** on the landing return slip.
-- **BACK dd MMM** in the Surprise me dialog when a save comes back.
-- One word state labels: "Archive opened" (empty dashboard), "Not on file" (404), "Misfiled" (error).
+An outlined mono label in violet ink: sentence case, untracked, 1.5px currentColor border, 3px corners, never filled. It is rotated a few degrees so it reads as hand stamped. It marks one event only, a save coming back:
+- **Back 1 Nov 2026** on the landing return slip and the Surprise me demo.
+- **Back 1 Nov** in the Surprise me dialog.
 
-When a stamp marks an event happening now (BACK), it animates in: from 135% scale and 2px blur to a slight undershoot, settling at its tilt (`--stamp-tilt`) over 500ms on an ease out expo curve.
+Everything else that looks like a stamp is plain dim mono instead: the Saved date on the slip, version numbers on the changelog. Dates always read day, three letter month, year ("1 Sep 2025", never "Sept"). Never use a stamp as a decorative label above a heading.
+
+When the stamp marks the return happening now, it animates in: from 135% scale and 2px blur to a slight undershoot, settling at its tilt (`--stamp-tilt`) over 500ms on an ease out expo curve.
 
 ### Bookmarklet Pill
 A draggable violet text pill with a 1.5px dashed violet border and full radius, grab cursor, stamp wash on hover. It is the one place a dashed accent border appears.
 
 ### Dialog (Surprise me)
-A paper colored panel, 32rem wide, 6px corners and hairline border, over a dimmed scrim, headed by a serif "Rediscovered" title with the animated BACK stamp beside it, holding a full bookmark card and an outline "Try another" button.
+A paper colored panel, 32rem wide, 6px corners and hairline border, over a dimmed scrim, headed by a serif "Rediscovered" title with the animated Back stamp beside it, holding a full bookmark card and an outline "Try another" button.
 
 ## Do's and Don'ts
 
@@ -337,7 +336,7 @@ A paper colored panel, 32rem wide, 6px corners and hairline border, over a dimme
 - **Do** use stamp violet for exactly one filled action per view and for links, active filters, tags and stamps.
 - **Do** set every heading and every saved item's title in Source Serif 4 at weight 500; use serif italic for small catalogue labels.
 - **Do** keep mono to dates, hostnames, counts and keys, with tabular numerals.
-- **Do** mark time with the date stamp: outlined, uppercase, slightly tilted; animate it only when the event is happening now.
+- **Do** keep the stamp for Back alone: outlined, sentence case, slightly tilted; animate it only when the return is happening now.
 - **Do** use 6px corners on containers, fields and buttons, and full pills only for chips and the bookmarklet.
 - **Do** separate landing sections with hairline rules or a paper tone change rather than boxing them in cards.
 - **Do** keep shadows to the single lift token, and only on presented or hovered objects.

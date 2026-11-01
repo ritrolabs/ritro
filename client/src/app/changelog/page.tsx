@@ -48,9 +48,7 @@ export default function ChangelogPage() {
         {RELEASES.map((r) => (
           <article key={r.version} className="reveal border-t border-[var(--border)] pt-10">
             <header className="flex flex-wrap items-center gap-x-4 gap-y-2">
-              <span className="date-stamp" style={{ transform: "rotate(-2deg)" }}>
-                v{r.version}
-              </span>
+              <p className="font-data text-xs text-[var(--text-dim)]">v{r.version}</p>
               <h2 className="font-serif text-2xl font-medium leading-snug text-[var(--text)]">{r.title}</h2>
               <p className="font-data text-xs text-[var(--text-dim)]">{r.date}</p>
             </header>

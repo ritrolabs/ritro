@@ -208,7 +208,7 @@ export default function BookmarkCard({
         if (!col) return null;
         return (
           <span key={colId} className="inline-flex items-center gap-1 text-xs bg-[var(--surface-2)] border border-[var(--border)] text-[var(--text-muted)] px-2 py-0.5 rounded-full">
-            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0">
+            <svg aria-hidden="true" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0">
               <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
             </svg>
             {col.name}
@@ -240,13 +240,13 @@ export default function BookmarkCard({
         type="button"
         onClick={() => setShowCollectionMenu((v) => !v)}
         aria-label="Add to collection"
-        className={`w-6 h-6 flex items-center justify-center rounded transition-all duration-100 ${
+        className={`w-6 h-6 flex items-center justify-center rounded transition-colors duration-100 ${
           showCollectionMenu
             ? "text-[var(--accent)] bg-[var(--accent-soft)]"
             : "text-[var(--text-dim)] hover:text-[var(--accent)]"
         }`}
       >
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
         </svg>
       </button>
@@ -276,7 +276,7 @@ export default function BookmarkCard({
 
   if (view === "grid") {
     return (
-      <div className="group relative flex flex-col rounded-md border border-[var(--border)] bg-[var(--surface)] overflow-hidden transition-all duration-150 hover:border-[var(--border-2)] hover:shadow-[var(--shadow-lift)] animate-fade-up">
+      <div className="group relative flex flex-col rounded-md border border-[var(--border)] bg-[var(--surface)] overflow-hidden transition-[border-color,box-shadow] duration-150 hover:border-[var(--border-2)] hover:shadow-[var(--shadow-lift)] animate-fade-up">
         {/* Thumbnail */}
         {bookmark.thumbnail ? (
           <Image
@@ -310,9 +310,9 @@ export default function BookmarkCard({
                 onClick={deleteBookmark}
                 disabled={deleting}
                 aria-label="Delete bookmark"
-                className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-[var(--error)] w-6 h-6 flex items-center justify-center rounded text-[var(--text-dim)] hover:text-[var(--error)] hover:bg-[var(--error-bg)] transition-all duration-100 disabled:opacity-30"
+                className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-[var(--error)] w-6 h-6 flex items-center justify-center rounded text-[var(--text-dim)] hover:text-[var(--error)] hover:bg-[var(--error-bg)] transition-[opacity,color,background-color] duration-100 disabled:opacity-30"
               >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" />
                 </svg>
               </button>
@@ -346,7 +346,7 @@ export default function BookmarkCard({
   }
 
   return (
-    <div className="group relative flex gap-4 rounded-md border border-[var(--border)] bg-[var(--surface)] p-4 transition-all duration-150 hover:border-[var(--border-2)] hover:shadow-[var(--shadow-lift)] animate-fade-up">
+    <div className="group relative flex gap-4 rounded-md border border-[var(--border)] bg-[var(--surface)] p-4 transition-[border-color,box-shadow] duration-150 hover:border-[var(--border-2)] hover:shadow-[var(--shadow-lift)] animate-fade-up">
       {/* Thumbnail */}
       {bookmark.thumbnail && (
         <Image
@@ -379,9 +379,9 @@ export default function BookmarkCard({
               onClick={deleteBookmark}
               disabled={deleting}
               aria-label="Delete bookmark"
-              className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-[var(--error)] w-6 h-6 flex items-center justify-center rounded text-[var(--text-dim)] hover:text-[var(--error)] hover:bg-[var(--error-bg)] transition-all duration-100 disabled:opacity-30"
+              className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-[var(--error)] w-6 h-6 flex items-center justify-center rounded text-[var(--text-dim)] hover:text-[var(--error)] hover:bg-[var(--error-bg)] transition-[opacity,color,background-color] duration-100 disabled:opacity-30"
             >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" />
               </svg>
             </button>
@@ -432,7 +432,7 @@ export default function BookmarkCard({
             maxLength={50}
             aria-label="Add tag"
             disabled={loading}
-            className="text-xs h-6 w-16 focus:w-24 rounded-full border border-dashed border-[var(--border)] bg-transparent px-2.5 text-[var(--text)] placeholder:text-[var(--text-dim)] focus:outline-none focus:border-[var(--accent)] transition-all duration-150 disabled:opacity-40"
+            className="text-xs h-6 w-16 focus:w-24 rounded-full border border-dashed border-[var(--border)] bg-transparent px-2.5 text-[var(--text)] placeholder:text-[var(--text-dim)] focus:outline-none focus:border-[var(--accent)] transition-colors duration-150 disabled:opacity-40"
           />
         </div>
 
