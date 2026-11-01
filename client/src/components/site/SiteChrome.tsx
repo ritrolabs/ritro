@@ -12,7 +12,7 @@ const NAV_LINKS: [label: string, href: string][] = [
   ["Open source", "/open-source"],
 ];
 
-// Shared header for every public page: full-width at the top, a floating glass pill once scrolled
+// Shared header for every public page: a plain bar that gains a paper backdrop once scrolled
 export function SiteHeader() {
   return (
     <StickyHeader>
@@ -86,7 +86,7 @@ export function SiteFooter() {
           {FOOTER_COLUMNS.map((col) => (
             <div key={col.title}>
               <p className="font-serif text-sm italic text-[var(--text-dim)]">{col.title}</p>
-              <ul className="mt-3 space-y-2 text-sm">
+              <ul className="mt-3 space-y-2 whitespace-nowrap text-sm">
                 {col.links.map(([label, href]) => (
                   <li key={label}>
                     {href.startsWith("http") || href.endsWith(".txt") ? (

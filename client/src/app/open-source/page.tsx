@@ -22,7 +22,7 @@ const PROMISES: { title: string; body: string; proof: string; href: string }[] =
   {
     title: "Your links can't reach our servers' insides",
     body: "Ritro fetches the pages you save. Every address, every redirect and the connection itself are checked, so a link can only ever reach the public internet.",
-    proof: "url-validation.ts · safe-fetch.ts",
+    proof: "url-validation.ts, safe-fetch.ts",
     href: `${GITHUB_URL}/tree/main/client/src/lib`,
   },
   {
@@ -132,12 +132,12 @@ export default function OpenSourcePage() {
           </p>
         </div>
         <div className="reveal min-w-0 md:col-span-7">
-          <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[#1F1B16] shadow-[var(--shadow-lift)]">
+          <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--code-bg)] shadow-[var(--shadow-lift)]">
             <div className="flex items-center justify-between border-b border-white/10 px-4 py-2.5">
               <span className="font-data text-xs text-white/50">Terminal</span>
               <CopyButton text={RUN_IT} />
             </div>
-            <pre className="overflow-x-auto p-5 font-data text-[13px] leading-6 text-[#F1EBDF]">{RUN_IT}</pre>
+            <pre className="overflow-x-auto p-5 font-data text-[13px] leading-6 text-[var(--code-text)]">{RUN_IT}</pre>
           </div>
         </div>
       </section>
@@ -172,7 +172,7 @@ export default function OpenSourcePage() {
         <h2 className="reveal max-w-2xl font-serif text-[clamp(2rem,4vw,3rem)] font-medium leading-tight tracking-[-0.02em]">
           Standing on open source.
         </h2>
-        <ul className="reveal mt-10 grid gap-x-10 gap-y-6 border-t border-[var(--border)] pt-8 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="reveal mt-10 grid gap-x-10 gap-y-6 border-t border-[var(--border)] pt-8 sm:grid-cols-2">
           {STANDING_ON.map(([name, licence, what]) => (
             <li key={name}>
               <p className="text-[15px] font-medium text-[var(--text)]">{name}</p>

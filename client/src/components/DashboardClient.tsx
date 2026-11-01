@@ -471,13 +471,13 @@ export default function DashboardClient({
                         activeCollection === col.id ? null : col.id,
                       )
                     }
-                    className={`text-xs pl-3 pr-6 py-1.5 rounded-full border transition-all duration-100 inline-flex items-center gap-1.5 ${
+                    className={`text-xs pl-3 pr-6 py-1.5 rounded-full border transition-colors duration-100 inline-flex items-center gap-1.5 ${
                       activeCollection === col.id
                         ? "bg-[var(--accent)] text-[var(--accent-text)] border-[var(--accent)]"
                         : "bg-[var(--surface)] text-[var(--text-muted)] border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
                     }`}
                   >
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
                     </svg>
                     {col.name}
@@ -505,9 +505,9 @@ export default function DashboardClient({
           {collections.length === 0 && !creatingCollection && (
             <button
               onClick={() => setCreatingCollection(true)}
-              className="text-xs px-3 py-1.5 rounded-full border border-dashed border-[var(--border-2)] text-[var(--text-dim)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-all duration-100 inline-flex items-center gap-1.5"
+              className="text-xs px-3 py-1.5 rounded-full border border-dashed border-[var(--border-2)] text-[var(--text-dim)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors duration-100 inline-flex items-center gap-1.5"
             >
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
                 <line x1="12" y1="11" x2="12" y2="17" /><line x1="9" y1="14" x2="15" y2="14" />
               </svg>
@@ -524,7 +524,7 @@ export default function DashboardClient({
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setActiveTag(null)}
-            className={`text-xs px-3 py-1.5 rounded-full border transition-all duration-100 ${
+            className={`text-xs px-3 py-1.5 rounded-full border transition-colors duration-100 ${
               activeTag === null
                 ? "bg-[var(--accent)] text-[var(--accent-text)] border-[var(--accent)]"
                 : "bg-[var(--surface)] text-[var(--text-muted)] border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
@@ -537,7 +537,7 @@ export default function DashboardClient({
               <button
                 key={tag}
                 onClick={() => setActiveTag(activeTag === tag ? null : tag)}
-                className={`text-xs px-3 py-1.5 rounded-full border transition-all duration-100 ${
+                className={`text-xs px-3 py-1.5 rounded-full border transition-colors duration-100 ${
                   activeTag === tag
                     ? "bg-[var(--accent)] text-[var(--accent-text)] border-[var(--accent)]"
                     : "bg-[var(--surface)] text-[var(--text-muted)] border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
@@ -550,7 +550,7 @@ export default function DashboardClient({
           {tagPills.length > TAG_LIMIT && (
             <button
               onClick={() => setShowAllTags((v) => !v)}
-              className="text-xs px-3 py-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)] text-[var(--text-dim)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-all duration-100"
+              className="text-xs px-3 py-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)] text-[var(--text-dim)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors duration-100"
             >
               {showAllTags
                 ? "Show less"
@@ -566,7 +566,7 @@ export default function DashboardClient({
       <div className="flex min-w-0 flex-col gap-5 lg:col-start-2 lg:row-start-2">
       {/* Search */}
       <div className="relative">
-        <svg
+        <svg aria-hidden="true"
           className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--accent)] pointer-events-none"
           width="14"
           height="14"
@@ -601,10 +601,8 @@ export default function DashboardClient({
       {/* Stats + Surprise me */}
       <div className="flex items-center justify-between">
         <p className="text-xs text-[var(--text-dim)]">
-          {localBookmarks.length} bookmark{localBookmarks.length !== 1 ? "s" : ""}{" "}
-          <span className="mx-1.5 opacity-40">·</span>{" "}
-          {totalTags} tag{totalTags !== 1 ? "s" : ""}{" "}
-          <span className="mx-1.5 opacity-40">·</span>{" "}
+          {localBookmarks.length} bookmark{localBookmarks.length !== 1 ? "s" : ""},{" "}
+          {totalTags} tag{totalTags !== 1 ? "s" : ""},{" "}
           {collections.length} collection{collections.length !== 1 ? "s" : ""}
         </p>
         {localBookmarks.length > 0 && (
@@ -612,7 +610,7 @@ export default function DashboardClient({
             onClick={handleSurpriseMe}
             disabled={surpriseLoading}
             aria-label="Show a random saved bookmark"
-            className="text-xs px-3 py-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:opacity-40 transition-all duration-100 inline-flex items-center gap-1.5"
+            className="text-xs px-3 py-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:opacity-40 transition-colors duration-100 inline-flex items-center gap-1.5"
           >
             {surpriseLoading ? "…" : (
               <>
@@ -628,7 +626,7 @@ export default function DashboardClient({
       {activeCollection && activeCollectionName && (
         <div className="flex items-center justify-between rounded-md border border-[var(--accent)] bg-[var(--accent-soft)] px-3 py-2">
           <span className="flex items-center gap-2 text-xs font-medium text-[var(--accent)]">
-            <svg
+            <svg aria-hidden="true"
               width="12"
               height="12"
               viewBox="0 0 24 24"
@@ -726,9 +724,6 @@ export default function DashboardClient({
           className="flex flex-col items-center justify-center gap-4 rounded-md border border-[var(--border)] bg-[var(--surface)] text-center"
           style={{ padding: "48px 32px" }}
         >
-          <span className="date-stamp" style={{ transform: "rotate(-3deg)" }}>
-            Archive opened
-          </span>
           <div>
             <h2 className="font-serif text-2xl font-medium text-[var(--text)] mb-1.5">
               Nothing saved yet
@@ -867,9 +862,7 @@ export default function DashboardClient({
                   // The return-slip stamp lands when a save comes back
                   <span className="date-stamp animate-stamp" style={{ ["--stamp-tilt" as string]: "-3deg" }}>
                     Back{" "}
-                    {new Date()
-                      .toLocaleDateString("en-GB", { day: "2-digit", month: "short" })
-                      .toUpperCase()}
+                    {new Date().getDate()} {new Date().toLocaleDateString("en-US", { month: "short" })}
                   </span>
                 )}
               </span>
@@ -904,7 +897,7 @@ export default function DashboardClient({
             <button
               onClick={handleSurpriseMe}
               disabled={surpriseLoading}
-              className="mt-4 w-full text-xs py-2.5 rounded-md border border-[var(--border-2)] text-[var(--text-muted)] hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:opacity-40 transition-all duration-100"
+              className="mt-4 w-full text-xs py-2.5 rounded-md border border-[var(--border-2)] text-[var(--text-muted)] hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:opacity-40 transition-colors duration-100"
             >
               {surpriseLoading ? "Finding…" : "Try another"}
             </button>

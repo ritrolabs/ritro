@@ -30,13 +30,13 @@ export default function Header({ email }: { email: string }) {
         <ThemeToggle />
         <Link
           href="/app/settings"
-          className="h-8 px-3 inline-flex items-center text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--surface-2)] rounded-md transition-all duration-100"
+          className="h-8 px-3 inline-flex items-center text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--surface-2)] rounded-md transition-colors duration-100"
         >
           Settings
         </Link>
         <button
           onClick={handleLogout}
-          className="h-8 px-3 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--surface-2)] rounded-md transition-all duration-100"
+          className="h-8 px-3 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--surface-2)] rounded-md transition-colors duration-100"
         >
           Log out
         </button>

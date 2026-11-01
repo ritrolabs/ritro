@@ -101,7 +101,7 @@ export default function ReturnSlip({ todayIso }: { todayIso: string }) {
 
         <div className="mt-6 flex min-h-[26px] flex-wrap items-center gap-3">
           {show(SAVED_AT) && (
-            <span key={`s${index}`} className={`date-stamp ${animate ? "animate-stamp" : ""}`} style={{ ["--stamp-tilt" as string]: "-3deg", transform: animate ? undefined : "rotate(-3deg)" }}>
+            <span key={`s${index}`} className={`font-data text-xs text-[var(--text-dim)] ${animate ? "animate-fade-in" : ""}`}>
               Saved {stampDate(monthsBefore(todayIso, demo.savedMonthsAgo))}
             </span>
           )}

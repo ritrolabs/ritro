@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import ReturnSlip from "@/components/landing/ReturnSlip";
 import BookmarkletLink from "@/components/landing/BookmarkletLink";
@@ -54,20 +53,14 @@ export default async function LandingPage({ searchParams }: { searchParams: Prom
               <em className="font-normal text-[var(--accent)]"><span className="highlight highlight-now">Find everything</span>.</em>
             </h1>
             <p className="animate-fade-up mt-7 max-w-xl text-lg leading-relaxed text-[var(--text-muted)]" style={{ animationDelay: "120ms" }}>
-              Ritro is a personal archive for the links you mean to come back to. Save in a second,
-              let it tag things for you, and it brings them back once you have forgotten them.
+              A personal archive that tags your links and brings them back.
             </p>
             <div className="animate-fade-up mt-9 flex flex-wrap items-center gap-x-6 gap-y-4" style={{ animationDelay: "240ms" }}>
               <Link
                 href="/auth?mode=signup"
-                className="group inline-flex h-12 items-center gap-2 rounded-md bg-[var(--accent)] px-6 text-[15px] font-medium text-[var(--accent-text)] transition-colors hover:bg-[var(--accent-hover)]"
+                className="inline-flex h-12 items-center gap-2 rounded-md bg-[var(--accent)] px-6 text-[15px] font-medium text-[var(--accent-text)] transition-colors hover:bg-[var(--accent-hover)]"
               >
                 Start your archive
-                <ArrowRight
-                  size={16}
-                  aria-hidden
-                  className="transition-transform duration-200 group-hover:translate-x-0.5"
-                />
               </Link>
               <a
                 href="#capture"
@@ -150,7 +143,7 @@ export default async function LandingPage({ searchParams }: { searchParams: Prom
                   href={EXTENSION_URL}
                   className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--accent)] hover:underline"
                 >
-                  Get the extension <ArrowRight size={14} aria-hidden />
+                  Get the extension
                 </a>
               </div>
               <div>
@@ -214,7 +207,7 @@ export default async function LandingPage({ searchParams }: { searchParams: Prom
               href="/auth?mode=signup"
               className="mt-10 inline-flex h-12 items-center gap-2 rounded-md bg-[var(--accent)] px-6 text-[15px] font-medium text-[var(--accent-text)] transition-colors hover:bg-[var(--accent-hover)]"
             >
-              Start your archive <ArrowRight size={16} aria-hidden />
+              Start your archive
             </Link>
           </div>
         </section>

@@ -66,7 +66,7 @@ export default function SaveUrlForm() {
         <button
           type="submit"
           disabled={loading || !url}
-          className="h-12 rounded-md bg-[var(--accent)] px-5 text-sm font-semibold text-[var(--accent-text)] hover:bg-[var(--accent-hover)] hover:shadow-[var(--shadow-lift)] disabled:opacity-50 transition-all duration-150 active:scale-95"
+          className="h-12 rounded-md bg-[var(--accent)] px-5 text-sm font-semibold text-[var(--accent-text)] hover:bg-[var(--accent-hover)] hover:shadow-[var(--shadow-lift)] disabled:opacity-50 transition-[background-color,box-shadow,transform] duration-150 active:scale-95"
         >
           {loading ? "Saving…" : "Save"}
         </button>
@@ -75,7 +75,7 @@ export default function SaveUrlForm() {
 
       {/* Bookmarklet install strip */}
       <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[var(--border)]">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--text-dim)] flex-shrink-0">
+        <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--text-dim)] flex-shrink-0">
           <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
         </svg>
         <span className="text-xs text-[var(--text-dim)]">Save from any page using the</span>
