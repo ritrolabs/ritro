@@ -1,0 +1,51 @@
+name: Bug report
+description: Report something that is broken or behaving unexpectedly.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Please do not include passwords, API keys, private bookmark URLs, or other sensitive data.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Tell us what you expected and what happened instead.
+      placeholder: I expected...
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to...
+        2. Click...
+        3. See...
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser, operating system, and whether this affects the website or extension.
+      placeholder: macOS, Chrome, website
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs or screenshots
+      description: Remove secrets and personal data before posting.
+      render: text
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I have searched existing issues for duplicates.
+          required: true
+        - label: I have removed secrets and private data from this report.
+          required: true
