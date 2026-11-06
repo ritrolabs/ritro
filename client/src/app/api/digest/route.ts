@@ -182,7 +182,7 @@ export async function GET(req: NextRequest) {
       const result = await resend.emails.send({
         from: "Ritro <onboarding@resend.dev>",
         to: user.email,
-        subject: "Good morning. Here's your Ritro digest.",
+        subject: `Your Ritro digest: ${bookmarks.length} ${bookmarks.length === 1 ? "save" : "saves"} worth another look`,
         html: buildDigestHtml(bookmarks, user.email),
       }, { idempotencyKey });
 
