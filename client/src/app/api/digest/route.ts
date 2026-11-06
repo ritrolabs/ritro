@@ -29,11 +29,12 @@ export async function GET(req: NextRequest) {
   // alone would fetch the same 500 users forever
   while (Date.now() - started < TIME_BUDGET_MS) {
     const due = await prisma.digestSchedule.findMany({
-      where: { nextDigestAt: { lte: now } },
+      // "after the last id" rather than Prisma's cursor: if a worker sends the last user of a page
+      // before the next query, that row is no longer due, and cursor + skip would skip a real one
+      where: { nextDigestAt: { lte: now }, ...(cursor ? { userId: { gt: cursor } } : {}) },
       orderBy: { userId: "asc" },
       take: PAGE,
       select: { userId: true },
-      ...(cursor ? { cursor: { userId: cursor }, skip: 1 } : {}),
     });
     if (due.length === 0) break;
 
