@@ -171,20 +171,36 @@ p {
   background: var(--accent-soft);
 }
 
-/* Landing header: a plain bar. Once the page scrolls it gains a paper backdrop and a hairline
-   rule; only colours change, so nothing reflows. */
+/* Landing header: a full-width bar at rest. Once the page scrolls, the bar floats: it pulls in
+   from the edges, drops a little below the top and becomes a rounded, lightly frosted pill. */
 .site-header {
-  border-bottom: 1px solid transparent;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  padding: 0 0.75rem;
+  transition: padding 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .site-header[data-scrolled] {
-  background: color-mix(in srgb, var(--bg) 85%, transparent);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  border-bottom-color: var(--border);
+  padding-top: 0.75rem;
 }
 .site-header-bar {
   max-width: 72rem;
+  border: 1px solid transparent;
+  border-radius: 0;
+  transition:
+    max-width 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    height 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    border-radius 0.35s ease,
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+.site-header[data-scrolled] .site-header-bar {
+  max-width: 56rem;
+  height: 3.5rem;
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  backdrop-filter: blur(16px) saturate(1.4);
+  border-color: var(--border);
+  box-shadow: var(--shadow-lift);
 }
 
 /* Sections ease in as they enter the viewport. CSS scroll timelines only (no JavaScript);
@@ -243,6 +259,35 @@ p {
     animation: highlight-draw 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.5s both;
     animation-timeline: auto;
   }
+}
+
+/* How it works demos (StepDemos.tsx). Base styles are the finished state; the timeline runs only
+   once [data-play] is set and motion is allowed. Transform and opacity only. */
+.step-tagging { opacity: 0; }
+@keyframes step-rise {
+  from { opacity: 0; transform: translateY(8px); }
+}
+@keyframes step-key-down {
+  to { transform: translateY(2px); }
+}
+@keyframes step-key-up {
+  from { transform: translateY(2px); }
+  to   { transform: none; }
+}
+@keyframes step-blink {
+  0%, 100% { opacity: 0; }
+  15%, 85% { opacity: 1; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .step-demo[data-play] .step-key {
+    animation:
+      step-key-down 0.12s ease-out var(--down-at) both,
+      step-key-up 0.18s ease-out 1.9s forwards;
+  }
+  .step-demo[data-play] .step-saved { animation: step-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) 2.1s both; }
+  .step-demo[data-play] .step-desc { animation: step-rise 0.6s ease-out 0.8s both; }
+  .step-demo[data-play] .step-tagging { animation: step-blink 1.9s ease-in-out 1.4s both; }
+  .step-demo[data-play] .step-tag { animation: step-rise 0.45s cubic-bezier(0.16, 1, 0.3, 1) var(--tag-at) both; }
 }
 
 /* ── Animations ─────────────────────────────────────────────────────────── */

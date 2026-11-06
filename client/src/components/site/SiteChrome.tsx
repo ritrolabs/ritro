@@ -12,7 +12,7 @@ const NAV_LINKS: [label: string, href: string][] = [
   ["Open source", "/open-source"],
 ];
 
-// Shared header for every public page: a plain bar that gains a paper backdrop once scrolled
+// Shared header for every public page: full-width at the top, a floating glass pill once scrolled
 export function SiteHeader() {
   return (
     <StickyHeader>

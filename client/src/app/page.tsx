@@ -6,6 +6,7 @@ import BookmarkletLink from "@/components/landing/BookmarkletLink";
 import { SiteFooter, SiteHeader, GITHUB_URL } from "@/components/site/SiteChrome";
 import SearchDemo from "@/components/landing/SearchDemo";
 import SurpriseDemo from "@/components/landing/SurpriseDemo";
+import { FileStepDemo, SaveStepDemo } from "@/components/landing/StepDemos";
 
 const EXTENSION_URL = "/extension";
 
@@ -19,10 +20,12 @@ const steps = [
         takes a second and never waits on anything else.
       </>
     ),
+    demo: <SaveStepDemo />,
   },
   {
     title: "Ritro files it.",
     body: "It reads the page's title, description and preview image, and a few seconds later AI adds tags. You can add your own, sort saves into collections, or leave it all alone.",
+    demo: <FileStepDemo />,
   },
   {
     title: "It comes back.",
@@ -88,9 +91,10 @@ export default async function LandingPage({ searchParams }: { searchParams: Prom
               {steps.map((step) => (
                 <li key={step.title} className="reveal grid gap-3 py-8 md:grid-cols-12 md:gap-10">
                   <h3 className="font-serif text-2xl font-medium md:col-span-4">{step.title}</h3>
-                  <p className="max-w-[60ch] text-[16px] leading-relaxed text-[var(--text-muted)] md:col-span-8">
-                    {step.body}
-                  </p>
+                  <div className="md:col-span-8">
+                    <p className="max-w-[60ch] text-[16px] leading-relaxed text-[var(--text-muted)]">{step.body}</p>
+                    {"demo" in step && step.demo}
+                  </div>
                 </li>
               ))}
             </ol>
