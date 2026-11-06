@@ -23,7 +23,7 @@ chrome.commands.onCommand.addListener(async (command) => {
     const res = await apiFetch("/api/bookmarks", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url: tab.url }),
+      body: JSON.stringify({ url: tab.url, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }),
     });
     if (res.ok) flashBadge(tabId, "✓", "#F59E0B", 2000);
     else flashBadge(tabId, "✖", "#EF4444", 3000);

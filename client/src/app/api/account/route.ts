@@ -87,6 +87,7 @@ export async function DELETE(req: NextRequest) {
     await prisma.$transaction([
       prisma.collection.deleteMany({ where: { userId: user.id } }),
       prisma.bookmark.deleteMany({ where: { userId: user.id } }),
+      prisma.digestSchedule.deleteMany({ where: { userId: user.id } }),
     ]);
   } catch (err) {
     // The account is gone but its rows remain: log the id so they can be removed by hand

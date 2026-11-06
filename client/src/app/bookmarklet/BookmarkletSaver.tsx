@@ -12,7 +12,7 @@ export default function BookmarkletSaver({ url }: { url: string }) {
         const res = await fetch("/api/bookmarks", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url }),
+          body: JSON.stringify({ url, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }),
         });
         if (res.status === 409) {
           setStatus("duplicate");
