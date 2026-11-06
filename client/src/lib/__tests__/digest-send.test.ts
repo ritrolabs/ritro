@@ -117,4 +117,17 @@ describe("sendDigest", () => {
     expect(m.send).not.toHaveBeenCalled();
     expect(m.update).not.toHaveBeenCalled();
   });
+
+  it("skips to tomorrow when Resend rejects the recipient, instead of retrying every hour", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    m.send.mockResolvedValue({ data: null, error: { name: "validation_error", statusCode: 422, message: "Invalid `to` field" } });
+    expect(await sendDigest("u1", NOW)).toEqual({ skipped: "rejected by Resend" });
+    expect(m.update.mock.calls[0][0].data.nextDigestAt.toISOString()).toBe(NEXT_INDIA);
+  });
+
+  it("keeps retrying configuration errors such as a bad API key", async () => {
+    m.send.mockResolvedValue({ data: null, error: { name: "invalid_api_key", statusCode: 403, message: "API key is invalid" } });
+    await expect(sendDigest("u1", NOW)).rejects.toThrow("API key is invalid");
+    expect(m.update).not.toHaveBeenCalled();
+  });
 });

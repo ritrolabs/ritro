@@ -84,7 +84,7 @@ export function buildDigestHtml(bookmarks: BookmarkWithTags[], email: string, no
         <tr><td style="background:#ffffff;padding:32px 32px 24px;">
           <p style="font-size:20px;font-weight:700;color:#0f0f0f;margin:0 0 6px;letter-spacing:-0.3px;">Hey &#x1F44B;</p>
           <p style="font-size:14px;color:#6b7280;margin:0 0 28px;line-height:1.6;">
-            Here are ${bookmarks.length} things you saved. Worth another look.
+            ${bookmarks.length === 1 ? "Here is 1 thing you saved." : `Here are ${bookmarks.length} things you saved.`} Worth another look.
           </p>
           ${note ? `<p style="font-size:13px;color:#9ca3af;margin:-20px 0 28px;line-height:1.6;">${escapeHtml(note)}</p>` : ""}
 

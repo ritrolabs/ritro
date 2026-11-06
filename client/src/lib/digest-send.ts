@@ -90,6 +90,14 @@ export async function sendDigest(userId: string, now = new Date()): Promise<Send
     });
     return { skipped: "already sent" };
   }
+  // A bad recipient address will never succeed: skip today instead of retrying every hour.
+  // Everything else throws so QStash retries, including a broken API key or sender, which would
+  // otherwise silently drop every user's digest for the day.
+  if (result.error?.name === "validation_error") {
+    console.error(`Digest: Resend rejected the email for ${userId}:`, result.error);
+    await moveToNextDay();
+    return { skipped: "rejected by Resend" };
+  }
   if (result.error) throw new Error(`Digest: Resend error for ${userId}: ${result.error.message}`);
 
   await prisma.digestSchedule.update({
