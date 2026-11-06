@@ -150,7 +150,7 @@ Ritro deploys to Vercel from `main`. Set the project's root directory to `client
 
 | Path | When (UTC) | Does |
 |---|---|---|
-| `/api/digest` | 08:00 | Emails each user up to five saves |
+| `/api/digest` | hourly (QStash schedule; Vercel cron at 08:00 as a daily backup) | Queues a digest for each user whose local 8 am has arrived (sent by `/api/jobs/send-digest`) |
 | `/api/jobs/requeue-untagged` | 09:00 | Re-queues saves from the last two days that never got tags |
 
 Both require `Authorization: Bearer $CRON_SECRET`, which Vercel adds automatically.

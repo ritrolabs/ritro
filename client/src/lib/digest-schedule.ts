@@ -1,4 +1,6 @@
+import { Client } from "@upstash/qstash";
 import { prisma } from "@/lib/prisma";
+import { appUrl } from "@/lib/tag-queue";
 import { isValidTimeZone, nextLocalEight } from "@/lib/digest-time";
 
 /**
@@ -33,5 +35,17 @@ export async function recordTimeZone(userId: string, reported: unknown): Promise
     });
   } catch (err) {
     console.error("Digest: failed to record time zone (non-fatal):", err);
+  }
+}
+
+const SEND_DIGEST_URL = `${appUrl}/api/jobs/send-digest`;
+// shortcut: 100 messages per QStash batch call, a conservative size; raise it if QStash's documented limit allows
+const QUEUE_CHUNK = 100;
+
+/** Queue one send-digest job per user. The worker does the sending (spec P2.8, section 7). */
+export async function queueDigests(userIds: string[]): Promise<void> {
+  const client = new Client();
+  for (let i = 0; i < userIds.length; i += QUEUE_CHUNK) {
+    await client.batchJSON(userIds.slice(i, i + QUEUE_CHUNK).map((userId) => ({ url: SEND_DIGEST_URL, body: { userId } })));
   }
 }

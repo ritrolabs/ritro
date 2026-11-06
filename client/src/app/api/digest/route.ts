@@ -1,202 +1,52 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Resend } from "resend";
 import { prisma } from "@/lib/prisma";
-import { getSupabaseAdmin } from "@/lib/supabase/admin";
-import { unsubscribeToken } from "@/lib/unsubscribe-token";
-import { escapeHtml } from "@/lib/html-escape";
+import { queueDigests } from "@/lib/digest-schedule";
 
-type BookmarkWithTags = {
-  url: string;
-  title: string | null;
-  description: string | null;
-  tags: Array<{ name: string }>;
-};
+// Hourly sweep (spec P2.8, section 7): find users whose local 8 am has arrived and queue one
+// send-digest job each. It never sends email itself, so the run stays short however many users
+// are due. A user is only marked done by the worker after their email is sent, so a crash here
+// just means the next hourly run queues them again.
+export const maxDuration = 60;
 
-function safeHostname(url: string): string {
-  try {
-    return new URL(url).hostname.replace(/^www\./, "");
-  } catch {
-    return url;
-  }
-}
+const PAGE = 500;
+const TIME_BUDGET_MS = 45_000;
 
-function buildBookmarkCard(bookmark: BookmarkWithTags, isLast: boolean): string {
-  const hostname = safeHostname(bookmark.url);
-  const initial = hostname.charAt(0).toUpperCase();
-  const title = bookmark.title ? escapeHtml(bookmark.title) : escapeHtml(hostname);
-  const description = bookmark.description
-    ? escapeHtml(
-        bookmark.description.length > 120
-          ? bookmark.description.slice(0, 120) + "…"
-          : bookmark.description
-      )
-    : "";
-
-  const tagsHtml =
-    bookmark.tags.length > 0
-      ? `<div style="margin-top:10px;">${bookmark.tags
-          .map(
-            (t) =>
-              `<span style="display:inline-block;font-size:11px;font-weight:500;color:#6d28d9;background:#ede9fe;border-radius:20px;padding:3px 10px;margin-right:5px;margin-bottom:4px;">${escapeHtml(t.name)}</span>`
-          )
-          .join("")}</div>`
-      : "";
-
-  return `
-    <div style="padding:20px 0;${isLast ? "" : "border-bottom:1px solid #f0f0f0;"}">
-      <div style="margin-bottom:8px;">
-        <span style="display:inline-block;width:28px;height:28px;background:#ede9fe;color:#6d28d9;font-size:12px;font-weight:700;border-radius:7px;text-align:center;line-height:28px;margin-right:8px;vertical-align:middle;">${initial}</span>
-        <span style="font-size:12px;color:#9ca3af;vertical-align:middle;">${escapeHtml(hostname)}</span>
-      </div>
-      <a href="${escapeHtml(bookmark.url)}" style="font-size:15px;font-weight:600;color:#111827;text-decoration:none;line-height:1.4;display:block;">${title}</a>
-      ${description ? `<p style="font-size:13px;color:#6b7280;margin:6px 0 0;line-height:1.6;">${description}</p>` : ""}
-      ${tagsHtml}
-    </div>`;
-}
-
-function buildDigestHtml(bookmarks: BookmarkWithTags[], email: string): string {
-  const unsubscribeUrl = `https://ritro.vercel.app/api/unsubscribe?token=${unsubscribeToken(email)}&email=${encodeURIComponent(email)}`;
-  const cards = bookmarks
-    .map((b, i) => buildBookmarkCard(b, i === bookmarks.length - 1))
-    .join("");
-
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Your Ritro digest</title>
-</head>
-<body style="margin:0;padding:0;background:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f5;padding:32px 16px;">
-    <tr><td align="center">
-      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;">
-
-        <!-- HEADER -->
-        <tr><td style="background:#0f0f0f;border-radius:16px 16px 0 0;padding:28px 32px;text-align:center;">
-          <div style="font-size:24px;font-weight:700;color:#ffffff;letter-spacing:-0.5px;">
-            ritro<span style="color:#F0A500;">.</span>
-          </div>
-          <div style="font-size:11px;color:#666;margin-top:6px;letter-spacing:1.5px;text-transform:uppercase;">
-            Your daily digest
-          </div>
-        </td></tr>
-
-        <!-- BODY -->
-        <tr><td style="background:#ffffff;padding:32px 32px 24px;">
-          <p style="font-size:20px;font-weight:700;color:#0f0f0f;margin:0 0 6px;letter-spacing:-0.3px;">Hey &#x1F44B;</p>
-          <p style="font-size:14px;color:#6b7280;margin:0 0 28px;line-height:1.6;">
-            Here are ${bookmarks.length} things you saved. Worth another look.
-          </p>
-
-          <!-- BOOKMARKS -->
-          ${cards}
-
-          <!-- CTA -->
-          <div style="text-align:center;margin-top:32px;">
-            <a href="https://ritro.vercel.app/app" style="display:inline-block;background:#F0A500;color:#0f0f0f;font-size:14px;font-weight:700;text-decoration:none;padding:13px 32px;border-radius:10px;letter-spacing:0.1px;">
-              Open Ritro &rarr;
-            </a>
-          </div>
-        </td></tr>
-
-        <!-- FOOTER -->
-        <tr><td style="background:#0f0f0f;border-radius:0 0 16px 16px;padding:24px 32px;text-align:center;">
-          <div style="font-size:15px;font-weight:700;color:#ffffff;margin-bottom:8px;letter-spacing:-0.3px;">
-            ritro<span style="color:#F0A500;">.</span>
-          </div>
-          <p style="font-size:12px;color:#555;margin:0;line-height:1.7;">
-            You&#39;re receiving this because you use
-            <a href="https://ritro.vercel.app" style="color:#F0A500;text-decoration:none;">Ritro</a>.<br />
-            The internet gave it to you once. Ritro gives it back.<br /><br />
-            <a href="${unsubscribeUrl}" style="color:#555;text-decoration:underline;font-size:11px;">Unsubscribe</a>
-          </p>
-        </td></tr>
-
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`;
-}
-
-// Vercel Cron calls with GET (and sends Authorization: Bearer CRON_SECRET)
+// Called hourly by a QStash schedule, and daily at 08:00 by Vercel Cron as a backup (the Hobby plan
+// allows daily crons only). Both send GET with Authorization: Bearer CRON_SECRET. A second run in the
+// same hour is harmless: it only queues users still due, and the worker skips anyone already sent.
 export async function GET(req: NextRequest) {
-  const authHeader = req.headers.get("Authorization");
   const secret = process.env.CRON_SECRET;
-  if (!secret || authHeader !== `Bearer ${secret}`) {
+  if (!secret || req.headers.get("Authorization") !== `Bearer ${secret}`) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  const admin = getSupabaseAdmin();
-  const allUsers = [];
-  let page = 1;
-  const perPage = 1000;
-  while (true) {
-    const { data, error } = await admin.auth.admin.listUsers({ page, perPage });
-    if (error) {
-      console.error("Digest: failed to list users:", error);
-      return NextResponse.json({ error: "failed to fetch users" }, { status: 500 });
-    }
-    allUsers.push(...data.users);
-    if (data.users.length < perPage) break;
-    page++;
-  }
+  const started = Date.now();
+  const now = new Date();
+  let queued = 0;
+  let cursor: string | undefined;
 
-  const resend = new Resend(process.env.RESEND_API_KEY);
-  let sent = 0;
-  let skipped = 0;
-  let errors = 0;
-
-  for (const user of allUsers) {
-    if (!user.email) {
-      skipped++;
-      continue;
-    }
-
-    if (user.user_metadata?.digest_opt_out === true) {
-      skipped++;
-      continue;
-    }
+  // Page by userId: queued users stay due until the worker sends, so paging by "still due"
+  // alone would fetch the same 500 users forever
+  while (Date.now() - started < TIME_BUDGET_MS) {
+    const due = await prisma.digestSchedule.findMany({
+      where: { nextDigestAt: { lte: now } },
+      orderBy: { userId: "asc" },
+      take: PAGE,
+      select: { userId: true },
+      ...(cursor ? { cursor: { userId: cursor }, skip: 1 } : {}),
+    });
+    if (due.length === 0) break;
 
     try {
-      const count = await prisma.bookmark.count({ where: { userId: user.id } });
-      if (count === 0) {
-        skipped++;
-        continue;
-      }
-
-      const take = Math.min(5, count);
-      const skip = count <= 5 ? 0 : Math.floor(Math.random() * (count - take + 1));
-      const bookmarks = await prisma.bookmark.findMany({
-        where: { userId: user.id },
-        orderBy: { createdAt: "asc" },
-        skip,
-        take,
-        include: { tags: true },
-      });
-
-      const date = new Date().toISOString().slice(0, 10);
-      const idempotencyKey = `digest-${user.id}-${date}`;
-
-      const result = await resend.emails.send({
-        from: "Ritro <onboarding@resend.dev>",
-        to: user.email,
-        subject: `Your Ritro digest: ${bookmarks.length} ${bookmarks.length === 1 ? "save" : "saves"} worth another look`,
-        html: buildDigestHtml(bookmarks, user.email),
-      }, { idempotencyKey });
-
-      if (result.error) {
-        console.error(`Digest: Resend error for ${user.email}:`, result.error);
-        errors++;
-      } else {
-        sent++;
-      }
+      await queueDigests(due.map((d) => d.userId));
     } catch (err) {
-      console.error(`Digest: unexpected error for user ${user.id}:`, err);
-      errors++;
+      console.error("Digest: failed to queue a page (next run retries):", err);
+      return NextResponse.json({ queued, error: "queue failed" }, { status: 500 });
     }
+    queued += due.length;
+    cursor = due[due.length - 1].userId;
+    if (due.length < PAGE) break;
   }
 
-  return NextResponse.json({ sent, skipped, errors });
+  return NextResponse.json({ queued });
 }
