@@ -102,4 +102,19 @@ describe("sendDigest", () => {
     await expect(sendDigest("u1", NOW)).rejects.toThrow("boom");
     expect(m.deleteMany).not.toHaveBeenCalled();
   });
+
+  it("skips a user with no bookmarks but moves them to tomorrow", async () => {
+    m.count.mockResolvedValue(0);
+    expect(await sendDigest("u1", NOW)).toEqual({ skipped: "no bookmarks" });
+    expect(m.send).not.toHaveBeenCalled();
+    expect(m.update.mock.calls[0][0].data.nextDigestAt.toISOString()).toBe(NEXT_INDIA);
+  });
+
+  it("does nothing when the schedule row is already gone", async () => {
+    m.findUnique.mockResolvedValue(null);
+    expect(await sendDigest("u1", NOW)).toEqual({ skipped: "not due" });
+    expect(m.getUserById).not.toHaveBeenCalled();
+    expect(m.send).not.toHaveBeenCalled();
+    expect(m.update).not.toHaveBeenCalled();
+  });
 });
