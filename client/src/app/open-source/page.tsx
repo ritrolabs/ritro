@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Check } from "lucide-react";
+import { Check, GitFork } from "lucide-react";
 import { ContentPage, GITHUB_URL } from "@/components/site/SiteChrome";
 import CopyButton from "@/components/site/CopyButton";
 import RepoTree from "@/components/site/RepoTree";
@@ -45,12 +45,19 @@ const PROMISES: { title: string; body: string; proof: string; href: string }[] =
   },
 ];
 
-const RUN_IT = `git clone ${GITHUB_URL}.git && cd ritro/client
-npm install
+const RUN_IT = `gh repo fork ritrolabs/ritro --clone
+cd ritro/client && npm install
 cp .env.example .env.local   # add your Supabase, Gemini and Upstash keys
 npx prisma generate          # build the database client
 npx prisma db push           # create the tables
 npm run dev                  # http://localhost:3000`;
+
+// What a fork is for. AGPL, not MIT: a changed copy you run for other people shares its changes
+const FORK_REASONS: [title: string, body: string][] = [
+  ["Change the look.", "Restyle every page to your taste."],
+  ["Swap the AI.", "Tag saves with your own model or prompts."],
+  ["Run your own.", "Host it with your own keys and your own data."],
+];
 
 const STANDING_ON: [name: string, licence: string, what: string][] = [
   ["Next.js", "MIT", "The website and its API"],
@@ -118,26 +125,51 @@ export default function OpenSourcePage() {
         </div>
       </section>
 
-      <section className="mt-28 grid gap-10 md:grid-cols-12">
-        <div className="reveal md:col-span-5">
-          <h2 className="font-serif text-[clamp(2rem,4vw,3rem)] font-medium leading-tight tracking-[-0.02em]">
-            Run your own copy.
-          </h2>
-          <p className="mt-4 text-[16px] leading-relaxed text-[var(--text-muted)]">
-            Five commands and free accounts on Supabase, Gemini and Upstash. The{" "}
-            <a href={`${GITHUB_URL}#run-it-locally`} className="text-[var(--accent)] underline underline-offset-2">
-              README
-            </a>{" "}
-            lists every setting.
-          </p>
-        </div>
-        <div className="reveal min-w-0 md:col-span-7">
-          <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--code-bg)] shadow-[var(--shadow-lift)]">
-            <div className="flex items-center justify-between border-b border-white/10 px-4 py-2.5">
-              <span className="font-data text-xs text-white/50">Terminal</span>
-              <CopyButton text={RUN_IT} />
+      <section id="fork" className="mt-28">
+        <h2 className="reveal max-w-3xl font-serif text-[clamp(2rem,4vw,3rem)] font-medium leading-tight tracking-[-0.02em]">
+          If you don&apos;t like something, fork it.
+        </h2>
+        <div className="mt-10 grid gap-6 md:grid-cols-12">
+          <div className="reveal min-w-0 md:col-span-7">
+            <div className="h-full overflow-hidden rounded-md border border-[var(--border)] bg-[var(--code-bg)] shadow-[var(--shadow-lift)]">
+              <div className="flex items-center justify-between border-b border-white/10 px-4 py-2.5">
+                <span className="font-data text-xs text-white/50">Terminal</span>
+                <CopyButton text={RUN_IT} />
+              </div>
+              <pre className="overflow-x-auto p-5 font-data text-[13px] leading-7 text-[var(--code-text)]">{RUN_IT}</pre>
             </div>
-            <pre className="overflow-x-auto p-5 font-data text-[13px] leading-6 text-[var(--code-text)]">{RUN_IT}</pre>
+          </div>
+          <div className="reveal flex min-w-0 flex-col rounded-md border border-[var(--border)] bg-[var(--surface)] p-6 md:col-span-5">
+            <ul className="space-y-4">
+              {FORK_REASONS.map(([title, body]) => (
+                <li key={title} className="flex gap-3 text-[15px] leading-relaxed">
+                  <Check size={16} aria-hidden className="mt-1 shrink-0 text-[var(--accent)]" />
+                  <span>
+                    <strong className="font-medium text-[var(--text)]">{title}</strong>{" "}
+                    <span className="text-[var(--text-muted)]">{body}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-6 text-sm leading-relaxed text-[var(--text-muted)]">
+              AGPL-3.0. Free accounts on Supabase, Gemini and Upstash are enough, and the{" "}
+              <a href={`${GITHUB_URL}#run-it-locally`} className="text-[var(--accent)] underline underline-offset-2">
+                README
+              </a>{" "}
+              lists every setting. If you run a changed copy for other people, share your changes with them.
+            </p>
+            <div className="mt-auto flex flex-wrap items-center gap-x-6 gap-y-3 pt-8">
+              <a
+                href={`${GITHUB_URL}/fork`}
+                className="inline-flex h-11 items-center gap-2 rounded-md bg-[var(--accent)] px-5 text-sm font-medium text-[var(--accent-text)] transition-colors hover:bg-[var(--accent-hover)]"
+              >
+                <GitFork size={16} aria-hidden />
+                Fork on GitHub
+              </a>
+              <a href={GITHUB_URL} className="text-sm font-medium text-[var(--text)] underline decoration-[var(--border-2)] underline-offset-4 hover:decoration-[var(--accent)]">
+                Browse the source
+              </a>
+            </div>
           </div>
         </div>
       </section>
