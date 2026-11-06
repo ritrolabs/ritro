@@ -120,7 +120,7 @@ describe("sendDigest", () => {
 
   it("skips to tomorrow when Resend rejects the recipient, instead of retrying every hour", async () => {
     vi.spyOn(console, "error").mockImplementation(() => {});
-    m.send.mockResolvedValue({ data: null, error: { name: "validation_error", statusCode: 422, message: "Invalid `to` field" } });
+    m.send.mockResolvedValue({ data: null, error: { name: "validation_error", statusCode: 400, message: "Invalid `to` field" } });
     expect(await sendDigest("u1", NOW)).toEqual({ skipped: "rejected by Resend" });
     expect(m.update.mock.calls[0][0].data.nextDigestAt.toISOString()).toBe(NEXT_INDIA);
   });
@@ -128,6 +128,16 @@ describe("sendDigest", () => {
   it("keeps retrying configuration errors such as a bad API key", async () => {
     m.send.mockResolvedValue({ data: null, error: { name: "invalid_api_key", statusCode: 403, message: "API key is invalid" } });
     await expect(sendDigest("u1", NOW)).rejects.toThrow("API key is invalid");
+    expect(m.update).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    [401, "API key is invalid"],
+    [403, "You can only send testing emails to your own email address"],
+    [403, "The `domain.com` domain is not verified"],
+  ])("keeps retrying setup errors reported as validation_error %i", async (statusCode, message) => {
+    m.send.mockResolvedValue({ data: null, error: { name: "validation_error", statusCode, message } });
+    await expect(sendDigest("u1", NOW)).rejects.toThrow(message);
     expect(m.update).not.toHaveBeenCalled();
   });
 });
