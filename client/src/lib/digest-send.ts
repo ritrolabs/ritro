@@ -31,6 +31,12 @@ export async function sendDigest(userId: string, now = new Date()): Promise<Send
   }
 
   const { data, error } = await getSupabaseAdmin().auth.admin.getUserById(userId);
+  // Account deleted but its schedule was left behind (account cleanup failed): remove it, or the
+  // sweep queues this user every hour forever. Any other error throws, so QStash retries.
+  if (error?.code === "user_not_found") {
+    await prisma.digestSchedule.deleteMany({ where: { userId } });
+    return { skipped: "user gone" };
+  }
   if (error || !data.user) throw new Error(`Digest: could not load user ${userId}: ${error?.message ?? "missing"}`);
   const user = data.user;
 
@@ -71,9 +77,19 @@ export async function sendDigest(userId: string, now = new Date()): Promise<Send
         zoneKnown ? undefined : "Open Ritro once and we'll send this at 8 am your time.",
       ),
     },
-    // Per user per local day: a repeat within 24 hours is dropped by Resend, so retries never double send
+    // Per user per local day: Resend drops a repeat of the same request within 24 hours
     { idempotencyKey: `digest-${userId}-${localDate(schedule.timeZone, now)}` },
   );
+  // A retry picks different bookmarks, so Resend sees the same key with a different payload and
+  // refuses it. The key being taken means today's digest already went out: count it as sent.
+  // Throwing here instead would retry every hour until the date (and key) changed, then send twice.
+  if (result.error?.name === "invalid_idempotent_request") {
+    await prisma.digestSchedule.update({
+      where: { userId },
+      data: { lastSentAt: now, nextDigestAt: nextLocalEight(schedule.timeZone, now) },
+    });
+    return { skipped: "already sent" };
+  }
   if (result.error) throw new Error(`Digest: Resend error for ${userId}: ${result.error.message}`);
 
   await prisma.digestSchedule.update({

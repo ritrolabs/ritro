@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const m = vi.hoisted(() => ({
   findUnique: vi.fn(),
   update: vi.fn(),
+  deleteMany: vi.fn(),
   count: vi.fn(),
   findMany: vi.fn(),
   getUserById: vi.fn(),
@@ -10,7 +11,7 @@ const m = vi.hoisted(() => ({
 }));
 vi.mock("@/lib/prisma", () => ({
   prisma: {
-    digestSchedule: { findUnique: m.findUnique, update: m.update },
+    digestSchedule: { findUnique: m.findUnique, update: m.update, deleteMany: m.deleteMany },
     bookmark: { count: m.count, findMany: m.findMany },
   },
 }));
@@ -81,5 +82,24 @@ describe("sendDigest", () => {
     const [email] = m.send.mock.calls[0];
     expect(email.subject).toMatch(/^Your Ritro digest: 1 save worth another look$/);
     expect(email.html).toContain("8 am your time");
+  });
+
+  it("counts a refused retry with a different payload as already sent, and moves on", async () => {
+    m.send.mockResolvedValue({ data: null, error: { name: "invalid_idempotent_request", message: "different payload" } });
+    expect(await sendDigest("u1", NOW)).toEqual({ skipped: "already sent" });
+    expect(m.update.mock.calls[0][0].data.nextDigestAt.toISOString()).toBe(NEXT_INDIA);
+  });
+
+  it("removes the schedule of a deleted account instead of failing every hour", async () => {
+    m.getUserById.mockResolvedValue({ data: { user: null }, error: { code: "user_not_found", message: "User not found" } });
+    expect(await sendDigest("u1", NOW)).toEqual({ skipped: "user gone" });
+    expect(m.deleteMany).toHaveBeenCalledWith({ where: { userId: "u1" } });
+    expect(m.send).not.toHaveBeenCalled();
+  });
+
+  it("still throws on other user lookup errors, so QStash retries", async () => {
+    m.getUserById.mockResolvedValue({ data: { user: null }, error: { code: "unexpected_failure", message: "boom" } });
+    await expect(sendDigest("u1", NOW)).rejects.toThrow("boom");
+    expect(m.deleteMany).not.toHaveBeenCalled();
   });
 });
