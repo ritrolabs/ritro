@@ -15,7 +15,7 @@ Save in a second, let AI tag it, and Ritro brings it back once you've forgotten 
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-3E3A9C?style=flat-square)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.0.1-3E3A9C?style=flat-square)](CHANGELOG.md)
 
-<img src="docs/screenshots/landing.png" alt="Ritro's home page: the headline Save anything. Find everything. next to a saved article stamped SAVED and BACK" width="900" />
+<img src="docs/screenshots/landing.png" alt="Ritro's home page: the headline Save anything. Find everything. next to a saved article, saved in April and stamped Back in November" width="900" />
 
 </div>
 
