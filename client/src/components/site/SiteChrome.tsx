@@ -10,6 +10,7 @@ const NAV_LINKS: [label: string, href: string][] = [
   ["Extension", "/extension"],
   ["Changelog", "/changelog"],
   ["Open source", "/open-source"],
+  ["Compare", "/compare"],
 ];
 
 // Shared header for every public page: full-width at the top, a floating glass pill once scrolled
@@ -26,7 +27,7 @@ export function SiteHeader() {
             <Link
               key={href}
               href={href}
-              className="hidden rounded-md px-3 py-2 text-sm text-[var(--text-muted)] hover:text-[var(--text)] md:block"
+              className="hidden whitespace-nowrap rounded-md px-3 py-2 text-sm text-[var(--text-muted)] hover:text-[var(--text)] md:block"
             >
               {label}
             </Link>
@@ -34,7 +35,7 @@ export function SiteHeader() {
           <ThemeToggle />
           <Link
             href="/auth"
-            className="rounded-md px-3 py-2 text-sm font-medium text-[var(--text)] hover:bg-[var(--surface-2)]"
+            className="whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium text-[var(--text)] hover:bg-[var(--surface-2)]"
           >
             Log in
           </Link>
@@ -51,6 +52,7 @@ const FOOTER_COLUMNS: { title: string; links: [label: string, href: string][] }[
       ["Open Ritro", "/auth"],
       ["Chrome extension", "/extension"],
       ["Changelog", "/changelog"],
+      ["Compare", "/compare"],
     ],
   },
   {
