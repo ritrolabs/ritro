@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   const user = await getUserFromRequest(req);
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
-  const [bookmarks, collections] = await Promise.all([
+  const [bookmarks, collections, digestSchedule] = await Promise.all([
     prisma.bookmark.findMany({
       where: { userId: user.id },
       orderBy: { createdAt: "asc" },
@@ -23,6 +23,10 @@ export async function GET(req: NextRequest) {
       orderBy: { createdAt: "asc" },
       select: { id: true, name: true, createdAt: true },
     }),
+    prisma.digestSchedule.findUnique({
+      where: { userId: user.id },
+      select: { timeZone: true, nextDigestAt: true, lastSentAt: true },
+    }),
   ]);
 
   const data = {
@@ -31,6 +35,8 @@ export async function GET(req: NextRequest) {
       email: user.email ?? null,
       createdAt: user.created_at,
       digestOptOut: user.user_metadata?.digest_opt_out === true,
+      // Time zone reported by the browser and when the daily digest is next due (null if never set up)
+      digestSchedule,
       // Profile details from Google or GitHub sign-in (name, picture), as stored by the auth provider
       profile: user.user_metadata ?? {},
     },
@@ -87,6 +93,7 @@ export async function DELETE(req: NextRequest) {
     await prisma.$transaction([
       prisma.collection.deleteMany({ where: { userId: user.id } }),
       prisma.bookmark.deleteMany({ where: { userId: user.id } }),
+      prisma.digestSchedule.deleteMany({ where: { userId: user.id } }),
     ]);
   } catch (err) {
     // The account is gone but its rows remain: log the id so they can be removed by hand

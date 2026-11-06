@@ -1,10 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { scrapeUrl, titleFromUrl } from "@/lib/scraper";
 import { getUserFromRequest } from "@/lib/supabase/get-user";
 import { bookmarkRatelimit, checkRatelimit } from "@/lib/ratelimit";
 import { queueTagging } from "@/lib/tag-queue";
 import { isPublicHost } from "@/lib/url-validation";
+import { recordTimeZone } from "@/lib/digest-schedule";
 
 export async function POST(req: NextRequest) {
   const user = await getUserFromRequest(req);
@@ -18,7 +19,7 @@ export async function POST(req: NextRequest) {
       { status: 429 },
     );
 
-  let body: { url?: unknown };
+  let body: { url?: unknown; timeZone?: unknown };
   try {
     body = await req.json();
   } catch {
@@ -84,6 +85,9 @@ export async function POST(req: NextRequest) {
     // The daily /api/jobs/requeue-untagged cron picks this bookmark up again
     console.error("Failed to queue AI tagging (non-fatal):", err);
   }
+
+  // Runs after the response is sent, so saving never waits on it
+  after(() => recordTimeZone(user.id, body.timeZone));
 
   return NextResponse.json(bookmark, { status: 201 });
 }

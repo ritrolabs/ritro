@@ -54,3 +54,14 @@ model CollectionBookmark {
 
   @@id([collectionId, bookmarkId])
 }
+
+// When each user's next digest is due. Users live in Supabase Auth, so this is keyed by their
+// auth id rather than a relation. See docs/specs/P2.8-digest-local-time.md.
+model DigestSchedule {
+  userId       String    @id
+  timeZone     String // IANA name from the user's browser, e.g. "Asia/Kolkata"; never an offset
+  nextDigestAt DateTime // UTC moment of the user's next local 8 am
+  lastSentAt   DateTime?
+
+  @@index([nextDigestAt])
+}
