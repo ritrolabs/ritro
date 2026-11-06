@@ -1,4 +1,4 @@
-/* Same tokens as the website (client/src/app/globals.css): paper, ink, stamp violet */
+/* Same tokens as the website (client/src/app/globals.css): white and near black grounds, neutral greys, violet accent */
 @font-face {
   font-family: "Source Serif 4";
   src: url("fonts/sourceserif4.woff2") format("woff2");
@@ -7,18 +7,18 @@
 }
 
 :root {
-  --bg: #F4EFE6;
-  --surface: #FBF8F2;
-  --surface-2: #EDE6DA;
-  --border: #E2D9CA;
-  --border-2: #CFC4B2;
-  --field-border: #8C8170; /* 3:1 against paper, for input outlines */
-  --text: #1F1B16;
-  --text-muted: #5E5548;
-  --text-dim: #766B5C;
+  --bg: #FFFFFF;
+  --surface: #FAFAFA;
+  --surface-2: #F4F4F5;
+  --border: #E4E4E7;
+  --border-2: #D4D4D8;
+  --field-border: #8A8A93; /* 3:1 against the background, for input outlines */
+  --text: #0A0A0A;
+  --text-muted: #52525B;
+  --text-dim: #67676F;
   --accent: #3E3A9C;
   --accent-hover: #2F2B80;
-  --accent-text: #FBF8F2;
+  --accent-text: #FFFFFF;
   --accent-soft: rgba(62, 58, 156, 0.09);
   --error: #B42318;
   --error-bg: #FBEAE7;
@@ -28,18 +28,18 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #171511;
-    --surface: #201D18;
-    --surface-2: #2A2620;
-    --border: rgba(244, 239, 230, 0.09);
-    --border-2: rgba(244, 239, 230, 0.17);
-    --field-border: #7A7164;
-    --text: #F1EBDF;
-    --text-muted: #B5AB9B;
-    --text-dim: #958B7B;
+    --bg: #0A0A0A;
+    --surface: #141414;
+    --surface-2: #1C1C1C;
+    --border: rgba(255, 255, 255, 0.09);
+    --border-2: rgba(255, 255, 255, 0.17);
+    --field-border: #6E6E77;
+    --text: #FAFAFA;
+    --text-muted: #A1A1AA;
+    --text-dim: #8E8E96;
     --accent: #ABA6F2;
     --accent-hover: #C4C0F7;
-    --accent-text: #171511;
+    --accent-text: #0A0A0A;
     --accent-soft: rgba(171, 166, 242, 0.12);
     --error: #F28B82;
     --error-bg: #2A1513;
