@@ -4,31 +4,31 @@ description: "Save anything. Find everything." A personal archive that returns t
 colors:
   stamp-violet: "#3E3A9C"
   stamp-violet-deep: "#2F2B80"
-  on-stamp: "#FBF8F2"
+  on-stamp: "#FFFFFF"
   stamp-wash: "rgba(62, 58, 156, 0.09)"
-  paper: "#F4EFE6"
-  paper-raised: "#FBF8F2"
-  paper-shade: "#EDE6DA"
-  rule: "#E2D9CA"
-  rule-strong: "#CFC4B2"
-  ink: "#1F1B16"
-  ink-muted: "#5E5548"
-  ink-dim: "#766B5C"
+  paper: "#FFFFFF"
+  paper-raised: "#FAFAFA"
+  paper-shade: "#F4F4F5"
+  rule: "#E4E4E7"
+  rule-strong: "#D4D4D8"
+  ink: "#0A0A0A"
+  ink-muted: "#52525B"
+  ink-dim: "#67676F"
   error: "#B42318"
   error-wash: "#FBEAE7"
   success: "#2F6B3A"
   stamp-violet-dark: "#ABA6F2"
   stamp-violet-deep-dark: "#C4C0F7"
-  on-stamp-dark: "#171511"
+  on-stamp-dark: "#0A0A0A"
   stamp-wash-dark: "rgba(171, 166, 242, 0.12)"
-  paper-dark: "#171511"
-  paper-raised-dark: "#201D18"
-  paper-shade-dark: "#2A2620"
-  rule-dark: "rgba(244, 239, 230, 0.09)"
-  rule-strong-dark: "rgba(244, 239, 230, 0.17)"
-  ink-dark: "#F1EBDF"
-  ink-muted-dark: "#B5AB9B"
-  ink-dim-dark: "#958B7B"
+  paper-dark: "#0A0A0A"
+  paper-raised-dark: "#141414"
+  paper-shade-dark: "#1C1C1C"
+  rule-dark: "rgba(255, 255, 255, 0.09)"
+  rule-strong-dark: "rgba(255, 255, 255, 0.17)"
+  ink-dark: "#FAFAFA"
+  ink-muted-dark: "#A1A1AA"
+  ink-dim-dark: "#8E8E96"
   error-dark: "#F28B82"
   error-wash-dark: "#2A1513"
   success-dark: "#8CC79A"
@@ -183,14 +183,14 @@ components:
 
 **Creative North Star: "The Lending Desk"**
 
-Ritro is a personal archive that returns things, and the interface is dressed as the desk of a small reading room: warm paper, dark ink, hairline rules, and a single stamp pad of violet ink that marks when something went out and when it came back. The landing page reads like an editorial page set in a serif, not a SaaS hero; the app is the card catalogue behind the desk, quieter and denser, with the same paper and ink.
+Ritro is a personal archive that returns things, and the interface is dressed as the desk of a small reading room: clean white paper, dark ink, hairline rules, and a single stamp pad of violet ink that marks when something went out and when it came back. The landing page reads like an editorial page set in a serif, not a SaaS hero; the app is the card catalogue behind the desk, quieter and denser, with the same paper and ink.
 
 Density is calm. The landing breathes on a wide 12 column measure with tall section rhythm and almost no containers; the app narrows to a single reading column of bordered slips. Depth comes from paper tone (three shades of paper) and hairlines, with one soft lift shadow reserved for things you can pick up. Motion is small and physical: items fade up into place, and a date stamp lands with a slight overshoot and settles crooked, the way a real one does.
 
-Light is the default and the reference; dark mode is a full sibling theme (warm near black paper, cream ink, a lighter lavender stamp) toggled by a class on the root and respected from the OS preference on first load.
+Light is the default and the reference; dark mode is a full sibling theme (near black ground, near white ink, a lighter lavender stamp) toggled by a class on the root and respected from the OS preference on first load.
 
 **Key Characteristics:**
-- Warm paper grounds with ink text; no pure white, no pure black.
+- White grounds with near black ink in light mode; near black grounds with near white ink in dark mode; neutral greys between. (Changed from warm paper tones on 6 November 2026.)
 - One accent only: stamp violet, for the primary action, links, active filters, tags and date stamps.
 - Three type voices with fixed jobs: serif for headings and item titles, sans for UI and reading copy, mono only for dates, hostnames and counts.
 - The Back stamp is the signature: an outlined, slightly tilted mono label, used only when a save returns.
@@ -224,7 +224,7 @@ Paper and ink with a single stamp pad violet; every text color passes WCAG AA on
 ### Named Rules
 **The One Stamp Pad Rule.** Violet is the only hue in the interface besides error red. If a new element needs emphasis, it gets violet, weight or serif, never a second accent.
 
-**The Paper Not White Rule.** Surfaces are always one of the three paper tones; nothing is `#FFFFFF` or `#000000`. Dark mode is warm paper at night, not grey.
+**The Neutral Ground Rule.** Light mode sits on white (`#FFFFFF`) with neutral greys for raised and recessed surfaces. Dark mode sits on near black (`#0A0A0A`), never pure `#000000`: light text on pure black shimmers for many readers. Greys are neutral, never warm or blue tinted.
 
 ## Typography
 
@@ -346,7 +346,7 @@ A paper colored panel, 32rem wide, 6px corners and hairline border, over a dimme
 
 ### Don't:
 - **Don't** add a second accent hue, gradients, or glow; violet and error red are the only colors beside paper and ink.
-- **Don't** use pure white or pure black surfaces.
+- **Don't** use pure black (`#000000`) surfaces, or warm or tinted greys.
 - **Don't** fill a date stamp or use it as a button; it is an ink mark.
 - **Don't** set body copy, buttons or headings in mono.
 - **Don't** build the landing from feature card grids or a mocked dashboard screenshot; show the mechanism with real looking slips labelled as examples.

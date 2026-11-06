@@ -7,20 +7,20 @@
    Paper and ink, with one stamp-pad violet accent. Every text colour here
    passes WCAG AA on both --bg and --surface, in both themes. */
 :root {
-  --bg:          #F4EFE6;
-  --surface:     #FBF8F2;
-  --surface-2:   #EDE6DA;
+  --bg:          #FFFFFF;
+  --surface:     #FAFAFA;
+  --surface-2:   #F4F4F5;
 
-  --border:      #E2D9CA;
-  --border-2:    #CFC4B2;
+  --border:      #E4E4E7;
+  --border-2:    #D4D4D8;
 
-  --text:        #1F1B16;
-  --text-muted:  #5E5548;
-  --text-dim:    #766B5C;
+  --text:        #0A0A0A;
+  --text-muted:  #52525B;
+  --text-dim:    #67676F;
 
   --accent:       #3E3A9C;
   --accent-hover: #2F2B80;
-  --accent-text:  #FBF8F2;
+  --accent-text:  #FFFFFF;
   --accent-soft:  rgba(62, 58, 156, 0.09);
   --highlight:    rgba(171, 166, 242, 0.55);
 
@@ -28,31 +28,31 @@
   --error-bg:    #FBEAE7;
   --success:     #2F6B3A;
 
-  --shadow-lift: 0 1px 2px rgba(31, 27, 22, 0.05), 0 8px 24px -12px rgba(31, 27, 22, 0.18);
-  --shadow-hair: 0 1px 2px rgba(31, 27, 22, 0.08);
-  --shadow-dialog: 0 24px 64px -24px rgba(31, 27, 22, 0.45);
-  --scrim:       rgba(23, 21, 17, 0.35);
-  --code-bg:     #1F1B16;
-  --code-text:   #F1EBDF;
+  --shadow-lift: 0 1px 2px rgba(0, 0, 0, 0.05), 0 8px 24px -12px rgba(0, 0, 0, 0.18);
+  --shadow-hair: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --shadow-dialog: 0 24px 64px -24px rgba(0, 0, 0, 0.45);
+  --scrim:       rgba(0, 0, 0, 0.35);
+  --code-bg:     #0A0A0A;
+  --code-text:   #FAFAFA;
 
   color-scheme: light;
 }
 
 .dark {
-  --bg:          #171511;
-  --surface:     #201D18;
-  --surface-2:   #2A2620;
+  --bg:          #0A0A0A;
+  --surface:     #141414;
+  --surface-2:   #1C1C1C;
 
-  --border:      rgba(244, 239, 230, 0.09);
-  --border-2:    rgba(244, 239, 230, 0.17);
+  --border:      rgba(255, 255, 255, 0.09);
+  --border-2:    rgba(255, 255, 255, 0.17);
 
-  --text:        #F1EBDF;
-  --text-muted:  #B5AB9B;
-  --text-dim:    #958B7B;
+  --text:        #FAFAFA;
+  --text-muted:  #A1A1AA;
+  --text-dim:    #8E8E96;
 
   --accent:       #ABA6F2;
   --accent-hover: #C4C0F7;
-  --accent-text:  #171511;
+  --accent-text:  #0A0A0A;
   --accent-soft:  rgba(171, 166, 242, 0.12);
   --highlight:    rgba(124, 118, 236, 0.45);
 
