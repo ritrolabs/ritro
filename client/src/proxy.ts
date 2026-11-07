@@ -24,8 +24,10 @@ export async function proxy(req: NextRequest) {
   // Calling getUser() triggers token refresh and writes the new cookie to `res`
   const { data: { user } } = await supabase.auth.getUser();
 
-  // Only protect /app routes — landing page and auth page are public
-  if (!user && req.nextUrl.pathname.startsWith("/app")) {
+  // Only protect /app routes — landing page and auth page are public.
+  // Exact segment match: a bare startsWith("/app") also caught /apple-icon.png and sent it to /auth
+  const path = req.nextUrl.pathname;
+  if (!user && (path === "/app" || path.startsWith("/app/"))) {
     return NextResponse.redirect(new URL("/auth", req.url));
   }
 
