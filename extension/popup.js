@@ -76,7 +76,7 @@ async function saveBookmark(url) {
   const res = await apiFetch("/api/bookmarks", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ url }),
+    body: JSON.stringify({ url, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }),
   });
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));

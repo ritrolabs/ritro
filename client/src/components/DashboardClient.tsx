@@ -85,6 +85,15 @@ export default function DashboardClient({
 }) {
   const router = useRouter();
 
+  // Tell the server this browser's time zone, so the daily digest arrives at 8 am local time
+  useEffect(() => {
+    fetch("/api/account/timezone", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }),
+    }).catch(() => {}); // best effort: the digest still goes out at 08:00 UTC without it
+  }, []);
+
   // A bookmark saved elsewhere (extension, bookmarklet, another tab) won't
   // appear here until this server-rendered data is re-fetched. Refresh on
   // return-to-tab rather than polling — cheap, and the reconciliation logic
