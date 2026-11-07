@@ -2,7 +2,10 @@ import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import BookmarkletSaver from "./BookmarkletSaver";
 
-export const metadata = { title: "Save to Ritro" };
+export const metadata = {
+  title: "Save to Ritro",
+  description: "Saving this page to your Ritro archive.",
+};
 
 function Logo() {
   return (

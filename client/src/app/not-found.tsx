@@ -1,6 +1,9 @@
 import Link from "next/link";
 
-export const metadata = { title: "Not found | Ritro" };
+export const metadata = {
+  title: "Not found | Ritro",
+  description: "This page isn't in the archive. The link may be old or mistyped.",
+};
 
 export default function NotFound() {
   return (

@@ -30,12 +30,18 @@ const mono = localFont({
 });
 
 export const metadata: Metadata = {
+  // Turns the share image and other relative URLs into full links for X, LinkedIn and WhatsApp
+  metadataBase: new URL("https://ritro.vercel.app"),
   title: "Ritro | Save anything. Find everything.",
   description:
     "Ritro saves anything with a link, tags it for you, and brings it back when you've forgotten it. A personal archive that returns things.",
   icons: {
     icon: "/favicon.svg",
+    apple: "/apple-icon.png",
   },
+  // No title or description here, so share cards fall back to each page's own title and description
+  openGraph: { type: "website", siteName: "Ritro" },
+  twitter: { card: "summary_large_image" },
 };
 
 // Runs before React hydrates — prevents flash of wrong theme on load
