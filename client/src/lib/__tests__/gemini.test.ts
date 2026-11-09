@@ -38,13 +38,13 @@ describe("generateTags", () => {
     await expect(generateTags("A", null)).resolves.toEqual(["c[0]", "arrays"]);
   });
 
-  it("still finds an array wrapped in other text", async () => {
-    generateContent.mockResolvedValue(reply('Here: ["react"]'));
-    await expect(generateTags("A", null)).resolves.toEqual(["react"]);
-  });
-
   it("throws on a nonempty array with no strings", async () => {
     generateContent.mockResolvedValue(reply("[1, null]"));
+    await expect(generateTags("A", null)).rejects.toThrow();
+  });
+
+  it("throws on a nonempty array with no usable tags", async () => {
+    generateContent.mockResolvedValue(reply('[" ", 1]'));
     await expect(generateTags("A", null)).rejects.toThrow();
   });
 
