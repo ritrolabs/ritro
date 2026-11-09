@@ -6,6 +6,7 @@ import { LayoutGrid, List, Plus, X } from "lucide-react";
 import BookmarkCard from "./BookmarkCard";
 import { confirmAction } from "@/lib/confirm";
 import { allTagsSaved } from "@/lib/same-tags";
+import { reconcileMembershipOverrides } from "@/lib/membership-overrides";
 
 function DiceIcon({
   width = 16,
@@ -142,27 +143,24 @@ export default function DashboardClient({
     new Map(),
   );
 
-  // Reconcile membershipOverrides when fresh bookmarks arrive (React setState-during-render pattern):
-  // remove stale keys and clear overrides where canonical data has caught up.
+  // Saves still in flight per bookmark, so a refresh can't undo their optimistic state
+  const [pendingMembership, setPendingMembership] = useState<Map<string, number>>(new Map());
+
+  function changePendingMembership(bookmarkId: string, delta: 1 | -1) {
+    setPendingMembership((prev) => {
+      const next = new Map(prev);
+      const count = (next.get(bookmarkId) ?? 0) + delta;
+      if (count > 0) next.set(bookmarkId, count);
+      else next.delete(bookmarkId);
+      return next;
+    });
+  }
+
+  // Reconcile membershipOverrides when fresh bookmarks arrive (React setState-during-render pattern)
   const [prevBookmarks, setPrevBookmarks] = useState(bookmarks);
   if (prevBookmarks !== bookmarks) {
     setPrevBookmarks(bookmarks);
-    const bookmarkIds = new Set(bookmarks.map((b) => b.id));
-    setMembershipOverrides((prev) => {
-      let changed = false;
-      const next = new Map(prev);
-      for (const [id, override] of prev) {
-        // Remove entry for deleted bookmarks
-        if (!bookmarkIds.has(id)) { next.delete(id); changed = true; continue; }
-        // Clear entry when canonical data matches the override (server caught up)
-        const canonical = bookmarks.find((b) => b.id === id)?.collectionIds ?? [];
-        const same =
-          override.length === canonical.length &&
-          override.every((c) => canonical.includes(c));
-        if (same) { next.delete(id); changed = true; }
-      }
-      return changed ? next : prev;
-    });
+    setMembershipOverrides((prev) => reconcileMembershipOverrides(prev, bookmarks, pendingMembership));
     // Once the server has every local tag, drop the override so newer AI tags can show
     setTagOverrides((prev) => {
       let changed = false;
@@ -299,6 +297,7 @@ export default function DashboardClient({
       next.set(bookmarkId, current);
       return next;
     });
+    changePendingMembership(bookmarkId, 1);
     try {
       const res = await fetch(`/api/collections/${collectionId}/bookmarks`, {
         method: "POST",
@@ -308,6 +307,9 @@ export default function DashboardClient({
       if (!res.ok) revert();
     } catch {
       revert();
+    } finally {
+      changePendingMembership(bookmarkId, -1);
+      router.refresh();
     }
   }
 
@@ -315,6 +317,16 @@ export default function DashboardClient({
     setTagOverrides((prev) => {
       const next = new Map(prev);
       next.set(bookmarkId, tags);
+      return next;
+    });
+  }
+
+  function handleTempTagSettled(bookmarkId: string, tempId: string, saved: TagItem | null) {
+    setTagOverrides((prev) => {
+      const tags = prev.get(bookmarkId);
+      if (!tags?.some((t) => t.id === tempId)) return prev;
+      const next = new Map(prev);
+      next.set(bookmarkId, saved ? tags.map((t) => (t.id === tempId ? saved : t)) : tags.filter((t) => t.id !== tempId));
       return next;
     });
   }
@@ -397,6 +409,7 @@ export default function DashboardClient({
       next.set(bookmarkId, current);
       return next;
     });
+    changePendingMembership(bookmarkId, 1);
     try {
       const res = await fetch(`/api/collections/${collectionId}/bookmarks/${bookmarkId}`, {
         method: "DELETE",
@@ -404,6 +417,9 @@ export default function DashboardClient({
       if (!res.ok) revert();
     } catch {
       revert();
+    } finally {
+      changePendingMembership(bookmarkId, -1);
+      router.refresh();
     }
   }
 
@@ -815,6 +831,7 @@ export default function DashboardClient({
                   onDelete={handleDeleteBookmark}
                   onDeleteFailed={handleDeleteFailed}
                   onTagsChange={handleTagsChange}
+                  onTempTagSettled={handleTempTagSettled}
                 />
               </div>
             ))}
@@ -842,6 +859,7 @@ export default function DashboardClient({
                   onDelete={handleDeleteBookmark}
                   onDeleteFailed={handleDeleteFailed}
                   onTagsChange={handleTagsChange}
+                  onTempTagSettled={handleTempTagSettled}
                 />
               </div>
             ))}
@@ -903,6 +921,7 @@ export default function DashboardClient({
                 onDelete={(id) => { handleDeleteBookmark(id); setSurpriseBookmark(null); }}
                 onDeleteFailed={handleDeleteFailed}
                 onTagsChange={handleTagsChange}
+                onTempTagSettled={handleTempTagSettled}
               />
             )}
             <button
