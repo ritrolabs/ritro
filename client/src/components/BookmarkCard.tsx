@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Check, Plus, X } from "lucide-react";
 import { confirmAction } from "@/lib/confirm";
 import { sameTags } from "@/lib/same-tags";
@@ -59,6 +60,7 @@ export default function BookmarkCard({
   onDeleteFailed,
   onTagsChange,
 }: Props) {
+  const router = useRouter();
   const [localTags, setLocalTags] = useState(bookmark.tags);
   // AI tags land after the card mounts, so take new tags when the prop changes
   const [prevPropTags, setPrevPropTags] = useState(bookmark.tags);
@@ -159,6 +161,9 @@ export default function BookmarkCard({
       if (!res.ok) {
         setError("failed to remove tag");
         setLocalTags(restore);
+      } else {
+        // A refresh that ran during this delete may have brought the tag back
+        router.refresh();
       }
     } catch {
       setError("failed to remove tag");
