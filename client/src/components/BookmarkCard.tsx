@@ -69,6 +69,8 @@ export default function BookmarkCard({
   const isFirstRender = useRef(true);
   useEffect(() => {
     if (isFirstRender.current) { isFirstRender.current = false; return; }
+    // Matching the prop means these tags came from the parent, so they aren't a local edit
+    if (sameTags(localTags, bookmark.tags)) return;
     onTagsChange?.(bookmark.id, localTags);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [localTags]);
