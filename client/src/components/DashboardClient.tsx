@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { LayoutGrid, List, Plus, X } from "lucide-react";
 import BookmarkCard from "./BookmarkCard";
 import { confirmAction } from "@/lib/confirm";
-import { sameTags } from "@/lib/same-tags";
+import { allTagsSaved } from "@/lib/same-tags";
 
 function DiceIcon({
   width = 16,
@@ -163,13 +163,13 @@ export default function DashboardClient({
       }
       return changed ? next : prev;
     });
-    // Same for tags, so an override can't hide later server changes
+    // Once the server has every local tag, drop the override so newer AI tags can show
     setTagOverrides((prev) => {
       let changed = false;
       const next = new Map(prev);
       for (const [id, override] of prev) {
         const canonical = bookmarks.find((b) => b.id === id);
-        if (!canonical || sameTags(override, canonical.tags)) { next.delete(id); changed = true; }
+        if (!canonical || allTagsSaved(override, canonical.tags)) { next.delete(id); changed = true; }
       }
       return changed ? next : prev;
     });
