@@ -15,23 +15,20 @@ async function handler(req: Request) {
   if (bookmark.taggingStatus !== "pending") return NextResponse.json({ skipped: true });
 
   const tagNames = await generateTags(bookmark.title, bookmark.description);
-  const markDone = prisma.bookmark.update({
-    where: { id: bookmarkId },
-    data: { taggingStatus: tagNames.length > 0 ? "tagged" : "empty" },
-  });
 
-  // Together, so a crash can't leave tags on a bookmark still marked pending
-  if (tagNames.length > 0) {
-    await prisma.$transaction([
-      prisma.tag.createMany({
+  // Only one delivery can move this row out of pending, and only that one adds tags
+  await prisma.$transaction(async (tx) => {
+    const { count } = await tx.bookmark.updateMany({
+      where: { id: bookmarkId, taggingStatus: "pending" },
+      data: { taggingStatus: tagNames.length > 0 ? "tagged" : "empty" },
+    });
+    if (count === 1 && tagNames.length > 0) {
+      await tx.tag.createMany({
         data: tagNames.map((name) => ({ name, bookmarkId })),
         skipDuplicates: true,
-      }),
-      markDone,
-    ]);
-  } else {
-    await prisma.$transaction([markDone]);
-  }
+      });
+    }
+  });
 
   return NextResponse.json({ tags: tagNames.length });
 }

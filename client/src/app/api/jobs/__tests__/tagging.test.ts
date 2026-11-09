@@ -1,21 +1,20 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { NextRequest } from "next/server";
 
-const { findUnique, findMany, updateMany, update, createMany, generateTags, queueTaggingBatch } = vi.hoisted(() => ({
+const { findUnique, findMany, updateMany, txUpdateMany, createMany, generateTags, queueTaggingBatch } = vi.hoisted(() => ({
   findUnique: vi.fn(),
   findMany: vi.fn(),
   updateMany: vi.fn(),
-  update: vi.fn((args) => ({ op: "update", args })),
-  createMany: vi.fn((args) => ({ op: "createMany", args })),
+  txUpdateMany: vi.fn(),
+  createMany: vi.fn(),
   generateTags: vi.fn(),
   queueTaggingBatch: vi.fn(),
 }));
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
-    bookmark: { findUnique, findMany, updateMany, update },
-    tag: { createMany },
-    $transaction: vi.fn(async (ops) => ops),
+    bookmark: { findUnique, findMany, updateMany },
+    $transaction: vi.fn(async (run) => run({ bookmark: { updateMany: txUpdateMany }, tag: { createMany } })),
   },
 }));
 vi.mock("@/lib/gemini", () => ({ generateTags }));
@@ -35,8 +34,16 @@ const runJob = () =>
 
 const pending = { id: "b1", title: "A", description: null, taggingStatus: "pending" };
 
+const claim = (taggingStatus: string) => ({
+  where: { id: "b1", taggingStatus: "pending" },
+  data: { taggingStatus },
+});
+
 describe("tag-bookmark job", () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    txUpdateMany.mockResolvedValue({ count: 1 });
+  });
 
   it("skips a bookmark that has left pending, so removed tags stay removed", async () => {
     findUnique.mockResolvedValue({ ...pending, taggingStatus: "tagged" });
@@ -48,23 +55,31 @@ describe("tag-bookmark job", () => {
     findUnique.mockResolvedValue(pending);
     generateTags.mockResolvedValue(["react"]);
     await runJob();
+    expect(txUpdateMany).toHaveBeenCalledWith(claim("tagged"));
     expect(createMany).toHaveBeenCalledOnce();
-    expect(update).toHaveBeenCalledWith({ where: { id: "b1" }, data: { taggingStatus: "tagged" } });
   });
 
   it("records empty when the model has no tags to offer", async () => {
     findUnique.mockResolvedValue(pending);
     generateTags.mockResolvedValue([]);
     await runJob();
+    expect(txUpdateMany).toHaveBeenCalledWith(claim("empty"));
     expect(createMany).not.toHaveBeenCalled();
-    expect(update).toHaveBeenCalledWith({ where: { id: "b1" }, data: { taggingStatus: "empty" } });
+  });
+
+  it("adds no tags when another delivery already claimed the bookmark", async () => {
+    findUnique.mockResolvedValue(pending);
+    generateTags.mockResolvedValue(["react"]);
+    txUpdateMany.mockResolvedValue({ count: 0 });
+    await runJob();
+    expect(createMany).not.toHaveBeenCalled();
   });
 
   it("lets a Gemini failure reach QStash and stays pending", async () => {
     findUnique.mockResolvedValue(pending);
     generateTags.mockRejectedValue(new Error("bad response"));
     await expect(runJob()).rejects.toThrow("bad response");
-    expect(update).not.toHaveBeenCalled();
+    expect(txUpdateMany).not.toHaveBeenCalled();
   });
 });
 
@@ -86,5 +101,6 @@ describe("requeue-untagged cron", () => {
     expect(where.tags).toBeUndefined();
     expect(updateMany.mock.calls[0][0].data).toEqual({ taggingStatus: "failed" });
     expect(updateMany.mock.calls[0][0].where.taggingStatus).toBe("pending");
+    expect(updateMany.mock.calls[0][0].where.createdAt.lt).toEqual(where.createdAt.gte);
   });
 });

@@ -11,6 +11,17 @@ function getClient(): GoogleGenAI {
   return _ai;
 }
 
+// The response is JSON mode, so parse it whole. The regex is a fallback for wrapped output.
+function parseTagArray(raw: string): unknown {
+  try {
+    return JSON.parse(raw);
+  } catch {
+    const match = raw.match(/\[[\s\S]*?\]/);
+    if (!match) throw new Error("Gemini returned no JSON array");
+    return JSON.parse(match[0]);
+  }
+}
+
 export async function generateTags(
   title: string | null,
   description: string | null
@@ -38,14 +49,11 @@ Example output: ["javascript", "tutorial", "web dev"]`;
   }
 
   // Bad output throws so the job retries. Only a valid empty array means "no tags".
-  const raw = response.text ?? "";
-  const match = raw.match(/\[[\s\S]*?\]/);
-  if (!match) throw new Error("Gemini returned no JSON array");
-
-  const tags = JSON.parse(match[0]);
+  const tags = parseTagArray(response.text ?? "");
   if (!Array.isArray(tags)) throw new Error("Gemini returned a non-array");
-  return tags
-    .filter((t): t is string => typeof t === "string")
+  const strings = tags.filter((t): t is string => typeof t === "string");
+  if (tags.length > 0 && strings.length === 0) throw new Error("Gemini returned no string tags");
+  return strings
     .map((t) => t.toLowerCase().trim())
     .filter((t) => t.length > 0)
     .slice(0, 5);
