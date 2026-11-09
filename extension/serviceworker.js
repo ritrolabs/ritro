@@ -25,7 +25,8 @@ chrome.commands.onCommand.addListener(async (command) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ url: tab.url }),
     });
-    if (res.ok) flashBadge(tabId, "✓", "#F59E0B", 2000);
+    // 409 means this page is already saved, which is the outcome the user wanted
+    if (res.ok || res.status === 409) flashBadge(tabId, "✓", "#F59E0B", 2000);
     else flashBadge(tabId, "✖", "#EF4444", 3000);
   } catch (e) {
     // Not logged in, or the session couldn't be refreshed: open the popup so they can sign in

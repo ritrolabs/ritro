@@ -49,6 +49,23 @@ export async function POST(req: NextRequest) {
 
   const normalizedUrl = parsedUrl.href;
 
+  try {
+    // shortcut: two simultaneous saves can both pass this; add @@unique([userId, url]) after removing existing duplicates
+    const existing = await prisma.bookmark.findFirst({
+      where: { userId: user.id, url: normalizedUrl },
+      select: { id: true },
+    });
+    if (existing) {
+      return NextResponse.json({ error: "already saved" }, { status: 409 });
+    }
+  } catch (err) {
+    console.error("Failed to check for an existing bookmark:", err);
+    return NextResponse.json(
+      { error: "failed to save bookmark" },
+      { status: 500 },
+    );
+  }
+
   const metadata = await scrapeUrl(normalizedUrl).catch(() => ({
     title: titleFromUrl(normalizedUrl),
     description: null,
