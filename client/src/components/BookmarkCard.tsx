@@ -31,6 +31,7 @@ type Props = {
   onDelete?: (bookmarkId: string) => void;
   onDeleteFailed?: (bookmarkId: string, error: string) => void;
   onTagsChange?: (bookmarkId: string, tags: Tag[]) => void;
+  onTempTagSettled?: (bookmarkId: string, tempId: string, saved: Tag | null) => void;
 };
 
 const relative = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
@@ -59,6 +60,7 @@ export default function BookmarkCard({
   onDelete,
   onDeleteFailed,
   onTagsChange,
+  onTempTagSettled,
 }: Props) {
   const router = useRouter();
   const [localTags, setLocalTags] = useState(bookmark.tags);
@@ -124,15 +126,18 @@ export default function BookmarkCard({
         const data = await res.json();
         setError(data.error ?? "failed to add tag");
         setLocalTags((prev) => prev.filter((t) => t.id !== tempId));
+        onTempTagSettled?.(bookmark.id, tempId, null);
       } else {
         const data = await res.json();
-        setLocalTags((prev) =>
-          prev.map((t) => (t.id === tempId ? { id: data.id, name: data.name } : t))
-        );
+        const saved = { id: data.id, name: data.name };
+        setLocalTags((prev) => prev.map((t) => (t.id === tempId ? saved : t)));
+        // The card may have unmounted while saving, so tell the parent directly
+        onTempTagSettled?.(bookmark.id, tempId, saved);
       }
     } catch {
       setError("failed to add tag");
       setLocalTags((prev) => prev.filter((t) => t.id !== tempId));
+      onTempTagSettled?.(bookmark.id, tempId, null);
     } finally {
       setLoading(false);
     }

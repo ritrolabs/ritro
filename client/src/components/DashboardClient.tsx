@@ -321,6 +321,16 @@ export default function DashboardClient({
     });
   }
 
+  function handleTempTagSettled(bookmarkId: string, tempId: string, saved: TagItem | null) {
+    setTagOverrides((prev) => {
+      const tags = prev.get(bookmarkId);
+      if (!tags?.some((t) => t.id === tempId)) return prev;
+      const next = new Map(prev);
+      next.set(bookmarkId, saved ? tags.map((t) => (t.id === tempId ? saved : t)) : tags.filter((t) => t.id !== tempId));
+      return next;
+    });
+  }
+
   // Snapshots membershipOverrides for bookmarks being optimistically deleted,
   // so handleDeleteFailed can restore them if the API call fails.
   const pendingDeletedOverrides = useRef<Map<string, string[]>>(new Map());
@@ -821,6 +831,7 @@ export default function DashboardClient({
                   onDelete={handleDeleteBookmark}
                   onDeleteFailed={handleDeleteFailed}
                   onTagsChange={handleTagsChange}
+                  onTempTagSettled={handleTempTagSettled}
                 />
               </div>
             ))}
@@ -848,6 +859,7 @@ export default function DashboardClient({
                   onDelete={handleDeleteBookmark}
                   onDeleteFailed={handleDeleteFailed}
                   onTagsChange={handleTagsChange}
+                  onTempTagSettled={handleTempTagSettled}
                 />
               </div>
             ))}
@@ -909,6 +921,7 @@ export default function DashboardClient({
                 onDelete={(id) => { handleDeleteBookmark(id); setSurpriseBookmark(null); }}
                 onDeleteFailed={handleDeleteFailed}
                 onTagsChange={handleTagsChange}
+                onTempTagSettled={handleTempTagSettled}
               />
             )}
             <button
