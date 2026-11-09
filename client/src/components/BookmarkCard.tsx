@@ -430,7 +430,8 @@ export default function BookmarkCard({
                 type="button"
                 aria-label={`Remove tag ${tag.name}`}
                 onClick={() => removeTag(tag.id)}
-                disabled={removingIds.has(tag.id)}
+                // A tag still saving has no real id to delete yet
+                disabled={removingIds.has(tag.id) || tag.id.startsWith("temp-")}
                 className="inline-flex text-[var(--text-dim)] hover:text-[var(--error)] disabled:opacity-40 leading-none"
               >
                 <X size={12} strokeWidth={2} aria-hidden />
