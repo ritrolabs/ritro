@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { LayoutGrid, List, Plus, X } from "lucide-react";
 import BookmarkCard from "./BookmarkCard";
 import { confirmAction } from "@/lib/confirm";
+import { sameTags } from "@/lib/same-tags";
 
 function DiceIcon({
   width = 16,
@@ -159,6 +160,16 @@ export default function DashboardClient({
           override.length === canonical.length &&
           override.every((c) => canonical.includes(c));
         if (same) { next.delete(id); changed = true; }
+      }
+      return changed ? next : prev;
+    });
+    // Same for tags, so an override can't hide later server changes
+    setTagOverrides((prev) => {
+      let changed = false;
+      const next = new Map(prev);
+      for (const [id, override] of prev) {
+        const canonical = bookmarks.find((b) => b.id === id);
+        if (!canonical || sameTags(override, canonical.tags)) { next.delete(id); changed = true; }
       }
       return changed ? next : prev;
     });

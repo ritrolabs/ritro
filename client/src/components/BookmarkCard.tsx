@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import Image from "next/image";
 import { Check, Plus, X } from "lucide-react";
 import { confirmAction } from "@/lib/confirm";
+import { sameTags } from "@/lib/same-tags";
 
 type Tag = { id: string; name: string };
 type Collection = { id: string; name: string };
@@ -59,6 +60,12 @@ export default function BookmarkCard({
   onTagsChange,
 }: Props) {
   const [localTags, setLocalTags] = useState(bookmark.tags);
+  // AI tags land after the card mounts, so take new tags when the prop changes
+  const [prevPropTags, setPrevPropTags] = useState(bookmark.tags);
+  if (prevPropTags !== bookmark.tags) {
+    setPrevPropTags(bookmark.tags);
+    if (!sameTags(bookmark.tags, localTags)) setLocalTags(bookmark.tags);
+  }
   const isFirstRender = useRef(true);
   useEffect(() => {
     if (isFirstRender.current) { isFirstRender.current = false; return; }
