@@ -7,13 +7,21 @@ datasource db {
   provider = "postgresql"
 }
 
+enum TaggingStatus {
+  pending
+  tagged
+  empty
+  failed
+}
+
 model Bookmark {
-  id          String   @id @default(cuid())
-  url         String
-  title       String?
-  description String?
-  thumbnail   String?
-  createdAt   DateTime @default(now())
+  id            String        @id @default(cuid())
+  url           String
+  title         String?
+  description   String?
+  thumbnail     String?
+  createdAt     DateTime      @default(now())
+  taggingStatus TaggingStatus @default(pending)
 
   userId String
 
