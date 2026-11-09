@@ -2,8 +2,10 @@
 
 import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Check, Plus, X } from "lucide-react";
 import { confirmAction } from "@/lib/confirm";
+import { sameTags } from "@/lib/same-tags";
 
 type Tag = { id: string; name: string };
 type Collection = { id: string; name: string };
@@ -58,10 +60,19 @@ export default function BookmarkCard({
   onDeleteFailed,
   onTagsChange,
 }: Props) {
+  const router = useRouter();
   const [localTags, setLocalTags] = useState(bookmark.tags);
+  // AI tags land after the card mounts, so take new tags when the prop changes
+  const [prevPropTags, setPrevPropTags] = useState(bookmark.tags);
+  if (prevPropTags !== bookmark.tags) {
+    setPrevPropTags(bookmark.tags);
+    if (!sameTags(bookmark.tags, localTags)) setLocalTags(bookmark.tags);
+  }
   const isFirstRender = useRef(true);
   useEffect(() => {
     if (isFirstRender.current) { isFirstRender.current = false; return; }
+    // Matching the prop means these tags came from the parent, so they aren't a local edit
+    if (sameTags(localTags, bookmark.tags)) return;
     onTagsChange?.(bookmark.id, localTags);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [localTags]);
@@ -150,6 +161,9 @@ export default function BookmarkCard({
       if (!res.ok) {
         setError("failed to remove tag");
         setLocalTags(restore);
+      } else {
+        // A refresh that ran during this delete may have brought the tag back
+        router.refresh();
       }
     } catch {
       setError("failed to remove tag");
