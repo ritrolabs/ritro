@@ -76,7 +76,8 @@ export default function PrivacyPage() {
       <p>
         If you&apos;re in the EU or UK, the legal bases are performance of our agreement with you
         (running your account) and legitimate interests (security, the digest, aggregate
-        statistics). You can object to any processing based on legitimate interests.
+        statistics), and your consent for Google Analytics and Microsoft Clarity cookies. You can
+        object to any processing based on legitimate interests, and withdraw consent at any time.
       </p>
 
       <h2>Who processes it</h2>

@@ -30,7 +30,7 @@ export default async function BookmarkletPage({
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center" data-clarity-mask="true">
         <div className="flex flex-col items-center text-center px-6">
           <Logo />
           <p className="text-sm font-medium text-[var(--text)] mb-1">Not logged in</p>
@@ -61,7 +61,7 @@ export default async function BookmarkletPage({
 
   if (!validUrl) {
     return (
-      <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center" data-clarity-mask="true">
         <div className="flex flex-col items-center text-center px-6">
           <Logo />
           <p className="text-sm font-medium text-[var(--text)] mb-1">Invalid URL</p>
@@ -72,7 +72,7 @@ export default async function BookmarkletPage({
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center">
+    <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center" data-clarity-mask="true">
       <div className="flex flex-col items-center w-full max-w-xs">
         <Logo />
         <p className="text-xs text-[var(--text-dim)] mb-6 truncate max-w-[240px]" title={validUrl}>

@@ -21,12 +21,17 @@ function readChoice(): Choice {
   }
 }
 
-function setChoice(choice: Choice) {
+// Returns false when storage is blocked, so callers don't act on a choice that wasn't saved
+function setChoice(choice: Choice): boolean {
+  let saved = true;
   try {
     if (choice) localStorage.setItem(KEY, choice);
     else localStorage.removeItem(KEY);
-  } catch {}
+  } catch {
+    saved = false;
+  }
   window.dispatchEvent(new Event(EVENT));
+  return saved;
 }
 
 function subscribe(callback: () => void) {
@@ -115,8 +120,7 @@ export function AnalyticsChoiceButton() {
   return (
     <button
       onClick={() => {
-        setChoice(null);
-        window.location.reload();
+        if (setChoice(null)) window.location.reload();
       }}
       className="underline hover:text-[var(--accent)]"
     >
