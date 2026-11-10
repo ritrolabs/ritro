@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import AnalyticsConsent from "@/components/AnalyticsConsent";
 import "./globals.css";
 
 // Self-hosted (latin, variable) instead of next/font/google: fetching from Google at
@@ -61,6 +62,7 @@ export default function RootLayout({
         {children}
         <Analytics />
         <SpeedInsights />
+        <AnalyticsConsent />
       </body>
     </html>
   );

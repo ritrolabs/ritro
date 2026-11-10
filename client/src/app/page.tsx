@@ -72,7 +72,7 @@ export default async function LandingPage({ searchParams }: { searchParams: Prom
                 Add the extension
               </a>
             </div>
-            <p className="mt-6 text-sm text-[var(--text-dim)]">Free and open source. No ads, no tracking cookies.</p>
+            <p className="mt-6 text-sm text-[var(--text-dim)]">Free and open source. No ads. Analytics cookies only if you say yes.</p>
           </div>
           <div className="min-w-0 md:col-span-5">
             <ReturnSlip todayIso={todayIso} />
@@ -190,8 +190,8 @@ export default async function LandingPage({ searchParams }: { searchParams: Prom
                 everything as a file, or delete your account and all of it, from Settings at any time.
               </li>
               <li>
-                <strong className="font-medium text-[var(--text)]">Nothing sold.</strong> No ads, no
-                tracking cookies. The{" "}
+                <strong className="font-medium text-[var(--text)]">Nothing sold.</strong> No ads, and
+                analytics cookies only if you accept them. The{" "}
                 <Link href="/privacy" className="text-[var(--accent)] underline underline-offset-2">
                   privacy policy
                 </Link>{" "}

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 const FACTS: [value: string, label: string][] = [
   ["AGPL-3.0", "licence"],
-  ["0", "tracking cookies"],
+  ["0", "ads"],
   ["50", "automated tests"],
   ["3", "database tables"],
 ];
@@ -39,7 +39,7 @@ const PROMISES: { title: string; body: string; proof: string; href: string }[] =
   },
   {
     title: "Nothing about you is sold",
-    body: "No ads, no tracking cookies. The privacy policy names every service that touches your data, and why.",
+    body: "No ads, and analytics cookies only with your consent. The privacy policy names every service that touches your data, and why.",
     proof: "privacy policy",
     href: "/privacy",
   },

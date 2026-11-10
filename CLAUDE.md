@@ -14,7 +14,7 @@ Read `GUIDE.md` first — it contains the full project briefing and teaching rul
 | Auth | Supabase Auth |
 | Deployment | Vercel — live at **ritro.vercel.app** |
 | Rate Limiting | Upstash Redis |
-| Analytics | Vercel Analytics + Speed Insights |
+| Analytics | Vercel Analytics + Speed Insights; Google Analytics + Microsoft Clarity behind a consent banner |
 
 ## UI Writing Rules
 

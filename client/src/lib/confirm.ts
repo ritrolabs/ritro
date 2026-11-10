@@ -15,6 +15,8 @@ export function confirmAction({
   return new Promise((resolve) => {
     const dialog = document.createElement("dialog");
     dialog.className = "confirm-dialog";
+    // Appended to <body>, outside the dashboard mask; titles in it must stay out of Clarity replays
+    dialog.setAttribute("data-clarity-mask", "true");
 
     const heading = document.createElement("h2");
     heading.className = "confirm-title";

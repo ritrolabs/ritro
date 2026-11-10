@@ -92,7 +92,7 @@ export default async function AdminPage() {
   const emailMap = new Map(authUsers.map((u) => [u.id, u.email ?? u.id]));
 
   return (
-    <div className="min-h-screen bg-[var(--bg)]">
+    <div className="min-h-screen bg-[var(--bg)]" data-clarity-mask="true">
       <Header email={user.email ?? ""} />
       <main className="max-w-4xl mx-auto pt-6 pb-16 px-4">
 

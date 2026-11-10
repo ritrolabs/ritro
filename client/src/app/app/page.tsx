@@ -73,8 +73,9 @@ export default async function AppPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/auth");
 
+  // data-clarity-mask: session recordings never capture anyone's saves or email
   return (
-    <div className="min-h-screen bg-[var(--bg)]">
+    <div className="min-h-screen bg-[var(--bg)]" data-clarity-mask="true">
       <Header email={user.email ?? ""} />
       <main className="mx-auto max-w-7xl px-4 pb-16 pt-6 sm:px-6 lg:px-8">
         <Suspense fallback={<DashboardSkeleton />}>
