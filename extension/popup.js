@@ -78,6 +78,8 @@ async function saveBookmark(url) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ url }),
   });
+  // Already saved is the outcome the user wanted
+  if (res.status === 409) return null;
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
     throw new Error(data.error || "Failed to save");
