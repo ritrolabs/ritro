@@ -72,7 +72,7 @@ export default async function LandingPage({ searchParams }: { searchParams: Prom
                 Add the extension
               </a>
             </div>
-            <p className="mt-6 text-sm text-[var(--text-dim)]">Free and open source. No ads. Analytics only if you say yes.</p>
+            <p className="mt-6 text-sm text-[var(--text-dim)]">Free and open source. No ads. Analytics cookies only if you say yes.</p>
           </div>
           <div className="min-w-0 md:col-span-5">
             <ReturnSlip todayIso={todayIso} />

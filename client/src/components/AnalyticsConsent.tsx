@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Script from "next/script";
 import { useEffect, useSyncExternalStore } from "react";
 
@@ -69,6 +70,8 @@ function useChoice() {
 // Google Analytics and Microsoft Clarity set cookies, so neither loads until the visitor accepts
 export default function AnalyticsConsent() {
   const choice = useChoice();
+  // The bookmarklet carries the link being saved in its address, which GA and Clarity would record
+  const skip = usePathname().startsWith("/bookmarklet");
 
   // Runs in every open tab: the storage event carries a withdrawal made in another tab
   useEffect(() => {
@@ -82,7 +85,7 @@ export default function AnalyticsConsent() {
     if (scriptsLoaded) window.location.reload();
   }, [choice]);
 
-  if (!GA_ID && !CLARITY_ID) return null;
+  if ((!GA_ID && !CLARITY_ID) || skip) return null;
 
   if (choice === "granted") {
     return (
