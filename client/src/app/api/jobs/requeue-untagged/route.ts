@@ -12,13 +12,21 @@ export async function GET(req: NextRequest) {
   }
 
   const now = Date.now();
+  const retryWindowStart = new Date(now - 2 * 24 * 60 * 60 * 1000);
+
+  // Out of retries: record it, so pending always means tagging can still happen
+  await prisma.bookmark.updateMany({
+    where: { taggingStatus: "pending", createdAt: { lt: retryWindowStart } },
+    data: { taggingStatus: "failed" },
+  });
+
   const untagged = await prisma.bookmark.findMany({
     where: {
-      tags: { none: {} },
+      taggingStatus: "pending",
       // Last 2 days only, so a page Gemini can never tag is retried twice, not forever.
       // Skip the newest 10 minutes: their first job may still be running.
       createdAt: {
-        gte: new Date(now - 2 * 24 * 60 * 60 * 1000),
+        gte: retryWindowStart,
         lte: new Date(now - 10 * 60 * 1000),
       },
     },

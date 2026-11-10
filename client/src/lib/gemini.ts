@@ -34,24 +34,17 @@ Example output: ["javascript", "tutorial", "web dev"]`;
 
   const finishReason = response.candidates?.[0]?.finishReason;
   if (finishReason && finishReason !== "STOP") {
-    console.warn("Gemini tag generation blocked, finishReason:", finishReason);
-    return [];
+    throw new Error(`Gemini did not finish tagging: ${finishReason}`);
   }
 
-  const raw = response.text ?? "";
-  const match = raw.match(/\[[\s\S]*?\]/);
-  if (!match) return [];
-
-  try {
-    const tags = JSON.parse(match[0]);
-    if (!Array.isArray(tags)) return [];
-    return tags
-      .filter((t): t is string => typeof t === "string")
-      .map((t) => t.toLowerCase().trim())
-      // An empty tag would make the worker treat the bookmark as tagged and skip it
-      .filter((t) => t.length > 0)
-      .slice(0, 5);
-  } catch {
-    return [];
-  }
+  // Bad output throws so the job retries. Only a valid empty array means "no tags".
+  // JSON mode returns the array alone, so anything else throws here
+  const tags: unknown = JSON.parse(response.text ?? "");
+  if (!Array.isArray(tags)) throw new Error("Gemini returned a non-array");
+  const cleaned = tags
+    .filter((t): t is string => typeof t === "string")
+    .map((t) => t.toLowerCase().trim())
+    .filter((t) => t.length > 0);
+  if (tags.length > 0 && cleaned.length === 0) throw new Error("Gemini returned no usable tags");
+  return cleaned.slice(0, 5);
 }

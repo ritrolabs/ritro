@@ -7,22 +7,28 @@ import { generateTags } from "@/lib/gemini";
 async function handler(req: Request) {
   const { bookmarkId } = await req.json();
 
-  const bookmark = await prisma.bookmark.findUnique({
-    where: { id: bookmarkId },
-    include: { _count: { select: { tags: true } } },
-  });
+  const bookmark = await prisma.bookmark.findUnique({ where: { id: bookmarkId } });
   // Deleted before the job ran: nothing to tag, and a retry won't change that
   if (!bookmark) return NextResponse.json({ skipped: true });
-  // Already tagged by an earlier delivery of this job: don't pay for Gemini twice
-  if (bookmark._count.tags > 0) return NextResponse.json({ skipped: true });
+  // Only pending bookmarks get tagged, so a repeat delivery can't pay for Gemini twice
+  // and tags the user removed don't come back
+  if (bookmark.taggingStatus !== "pending") return NextResponse.json({ skipped: true });
 
   const tagNames = await generateTags(bookmark.title, bookmark.description);
-  if (tagNames.length > 0) {
-    await prisma.tag.createMany({
-      data: tagNames.map((name) => ({ name, bookmarkId })),
-      skipDuplicates: true,
+
+  // Only one delivery can move this row out of pending, and only that one adds tags
+  await prisma.$transaction(async (tx) => {
+    const { count } = await tx.bookmark.updateMany({
+      where: { id: bookmarkId, taggingStatus: "pending" },
+      data: { taggingStatus: tagNames.length > 0 ? "tagged" : "empty" },
     });
-  }
+    if (count === 1 && tagNames.length > 0) {
+      await tx.tag.createMany({
+        data: tagNames.map((name) => ({ name, bookmarkId })),
+        skipDuplicates: true,
+      });
+    }
+  });
 
   return NextResponse.json({ tags: tagNames.length });
 }
