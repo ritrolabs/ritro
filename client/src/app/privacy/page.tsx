@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import LegalPage from "@/components/LegalPage";
+import { AnalyticsChoiceButton } from "@/components/AnalyticsConsent";
 
 export const metadata: Metadata = {
   title: "Privacy Policy | Ritro",
@@ -10,7 +11,7 @@ const CONTACT = "minitjain.work@gmail.com";
 
 export default function PrivacyPage() {
   return (
-    <LegalPage title="Privacy Policy" updated="30 October 2026">
+    <LegalPage title="Privacy Policy" updated="10 November 2026">
       <p>
         Ritro is a personal, non-commercial project run by Minit Jain, an individual based in
         India. This policy explains what data Ritro (the website at ritro.vercel.app and the Ritro
@@ -42,7 +43,10 @@ export default function PrivacyPage() {
         <li>
           <strong>Usage statistics.</strong> Aggregated page views and page speed measurements
           through Vercel Web Analytics and Speed Insights. These don&apos;t use cookies and
-          don&apos;t identify you across other sites.
+          don&apos;t identify you across other sites. If you accept the cookie banner, Google
+          Analytics also records the pages you visit, your approximate location and device, and
+          Microsoft Clarity records clicks, scrolling and anonymised session replays. Inside your
+          account (your saves, collections and email) Clarity hides all text.
         </li>
       </ul>
       <p>
@@ -64,6 +68,10 @@ export default function PrivacyPage() {
         </li>
         <li>To keep the service secure and prevent abuse, for example through rate limiting.</li>
         <li>To understand, in aggregate, how the site is used and how fast it loads.</li>
+        <li>
+          To see which pages and features people use and where they get stuck, through Google
+          Analytics and Microsoft Clarity (only with your consent).
+        </li>
       </ul>
       <p>
         If you&apos;re in the EU or UK, the legal bases are performance of our agreement with you
@@ -94,6 +102,11 @@ export default function PrivacyPage() {
           that schedules tagging (bookmark IDs only).
         </li>
         <li>
+          <strong>Google Analytics</strong> and <strong>Microsoft Clarity</strong>: usage
+          statistics and session replays, only if you accept the cookie banner. Advertising
+          features are turned off.
+        </li>
+        <li>
           <strong>Resend</strong>: delivers the digest email, so it receives your email address and
           the saves listed in that email.
         </li>
@@ -116,7 +129,8 @@ export default function PrivacyPage() {
       <h2>How long it&apos;s kept</h2>
       <p>
         Your account and saves are kept until you delete them or delete your account. Deleted bookmarks are removed from the database straight away. Rate-limit counters
-        expire within an hour. Server logs are kept for the period set by the hosting provider.
+        expire within an hour. Server logs are kept for the period set by the hosting provider. Google Analytics data
+        is kept for up to 14 months, and Clarity keeps session replays for up to 30 days.
       </p>
 
       <h2>Your rights</h2>
@@ -143,11 +157,12 @@ export default function PrivacyPage() {
         </li>
       </ul>
 
-      <h2>Cookies and local storage</h2>
+      <h2 id="cookies">Cookies and local storage</h2>
       <p>
-        Ritro uses only cookies that are strictly necessary to keep you signed in. Your theme
-        choice is stored in your browser&apos;s local storage. There are no advertising or tracking
-        cookies, and the usage statistics don&apos;t use cookies, so there is no cookie banner.
+        Ritro needs cookies to keep you signed in. Your theme choice and your answer to the cookie
+        banner are stored in your browser&apos;s local storage. Google Analytics and Microsoft
+        Clarity set analytics cookies, and they load only after you accept the banner. If you
+        decline, they never load. There are no advertising cookies. <AnalyticsChoiceButton />
       </p>
 
       <h2>Children</h2>

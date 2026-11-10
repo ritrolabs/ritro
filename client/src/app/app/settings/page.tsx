@@ -15,7 +15,7 @@ export default async function SettingsPage() {
   if (!user) redirect("/auth");
 
   return (
-    <div className="min-h-screen bg-[var(--bg)]">
+    <div className="min-h-screen bg-[var(--bg)]" data-clarity-mask="true">
       <Header email={user.email ?? ""} />
       <main className="max-w-2xl mx-auto pt-8 pb-16 px-4">
         <Link
