@@ -46,10 +46,15 @@ function clearAnalytics() {
     .split(";")
     .map((c) => c.split("=")[0].trim())
     .filter((n) => n === "_ga" || n.startsWith("_ga_"));
+  // GA may set cookies on a parent domain (www.example.com -> example.com), so try every suffix
+  const parts = location.hostname.split(".");
+  const domains = [""];
+  for (let i = 0; i < parts.length - 1; i++) {
+    const host = parts.slice(i).join(".");
+    domains.push(`; domain=${host}`, `; domain=.${host}`);
+  }
   for (const name of names) {
-    for (const domain of ["", `; domain=${location.hostname}`, `; domain=.${location.hostname}`]) {
-      document.cookie = `${name}=; Max-Age=0; path=/${domain}`;
-    }
+    for (const domain of domains) document.cookie = `${name}=; Max-Age=0; path=/${domain}`;
   }
 }
 
