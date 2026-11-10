@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Script from "next/script";
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID;
@@ -21,17 +21,13 @@ function readChoice(): Choice {
   }
 }
 
-// Returns false when storage is blocked, so callers don't act on a choice that wasn't saved
-function setChoice(choice: Choice): boolean {
-  let saved = true;
+// If storage is blocked the stored choice doesn't change, so nothing reloads or clears
+function setChoice(choice: Choice) {
   try {
     if (choice) localStorage.setItem(KEY, choice);
     else localStorage.removeItem(KEY);
-  } catch {
-    saved = false;
-  }
+  } catch {}
   window.dispatchEvent(new Event(EVENT));
-  return saved;
 }
 
 function subscribe(callback: () => void) {
@@ -43,14 +39,44 @@ function subscribe(callback: () => void) {
   };
 }
 
+// Clarity's revocation call erases its cookies; GA has no API for that, so expire _ga cookies directly
+function clearAnalytics() {
+  (window as unknown as { clarity?: (...args: unknown[]) => void }).clarity?.("consent", false);
+  const names = document.cookie
+    .split(";")
+    .map((c) => c.split("=")[0].trim())
+    .filter((n) => n === "_ga" || n.startsWith("_ga_"));
+  for (const name of names) {
+    for (const domain of ["", `; domain=${location.hostname}`, `; domain=.${location.hostname}`]) {
+      document.cookie = `${name}=; Max-Age=0; path=/${domain}`;
+    }
+  }
+}
+
+// Set once this page has loaded the scripts; they can't be unloaded, so withdrawal reloads the page
+let scriptsLoaded = false;
+
 function useChoice() {
-  // Server snapshot "denied": nothing renders on the server, the banner appears after hydration
-  return useSyncExternalStore(subscribe, readChoice, () => "denied" as Choice);
+  // "unknown" on the server and during hydration: render nothing and clear nothing until storage is read
+  return useSyncExternalStore<Choice | "unknown">(subscribe, readChoice, () => "unknown");
 }
 
 // Google Analytics and Microsoft Clarity set cookies, so neither loads until the visitor accepts
 export default function AnalyticsConsent() {
   const choice = useChoice();
+
+  // Runs in every open tab: the storage event carries a withdrawal made in another tab
+  useEffect(() => {
+    if (choice === "unknown") return;
+    if (choice === "granted") {
+      scriptsLoaded = true;
+      return;
+    }
+    // Also on every load without consent: a closing tab's GA can rewrite a cookie after it was cleared
+    clearAnalytics();
+    if (scriptsLoaded) window.location.reload();
+  }, [choice]);
+
   if (!GA_ID && !CLARITY_ID) return null;
 
   if (choice === "granted") {
@@ -73,14 +99,14 @@ export default function AnalyticsConsent() {
             t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
             y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
             })(window, document, "clarity", "script", "${CLARITY_ID}");
-            window.clarity('consent');
+            window.clarity('consentv2', { ad_Storage: 'denied', analytics_Storage: 'granted' });
           `}</Script>
         )}
       </>
     );
   }
 
-  if (choice === "denied") return null;
+  if (choice === "denied" || choice === "unknown") return null;
 
   return (
     <div
@@ -113,14 +139,14 @@ export default function AnalyticsConsent() {
   );
 }
 
-// Lets a visitor change their answer later; reload so already-loaded scripts stop
+// Lets a visitor change their answer later; AnalyticsConsent clears cookies and reloads if scripts were running
 export function AnalyticsChoiceButton() {
   const choice = useChoice();
-  if ((!GA_ID && !CLARITY_ID) || choice === null) return null;
+  if ((!GA_ID && !CLARITY_ID) || choice === null || choice === "unknown") return null;
   return (
     <button
       onClick={() => {
-        if (setChoice(null)) window.location.reload();
+        setChoice(null);
       }}
       className="underline hover:text-[var(--accent)]"
     >
