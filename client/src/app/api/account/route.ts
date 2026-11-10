@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { getUserFromRequest } from "@/lib/supabase/get-user";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { DELETE_CONFIRMATION } from "@/lib/account";
+import { deleteAccountData } from "@/lib/account-data";
+import { queueAccountDataDeletion } from "@/lib/tag-queue";
 
 // GET /api/account — download everything stored for this account as JSON
 export async function GET(req: NextRequest) {
@@ -82,19 +84,21 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ error: "could not delete your account. Try again." }, { status: 500 });
   }
 
-  // Tags and collection links are removed by the schema's cascading deletes
   try {
-    await prisma.$transaction([
-      prisma.collection.deleteMany({ where: { userId: user.id } }),
-      prisma.bookmark.deleteMany({ where: { userId: user.id } }),
-    ]);
+    await deleteAccountData(user.id);
   } catch (err) {
-    // The account is gone but its rows remain: log the id so they can be removed by hand
-    console.error(`Account deletion: data removal failed for user ${user.id}:`, err);
-    return NextResponse.json(
-      { error: "your account was deleted, but some saves could not be removed. Contact support." },
-      { status: 500 },
-    );
+    // The user can't retry now that the login is gone, so a background job finishes the removal
+    console.error(`Account deletion: data removal failed for user ${user.id}, queueing retry:`, err);
+    try {
+      await queueAccountDataDeletion(user.id);
+    } catch (queueErr) {
+      // Both failed: log the id so the rows can be removed by hand
+      console.error(`Account deletion: retry not queued for user ${user.id}:`, queueErr);
+      return NextResponse.json(
+        { error: "your account was deleted, but some saves could not be removed. Contact support." },
+        { status: 500 },
+      );
+    }
   }
 
   return NextResponse.json({ deleted: true });

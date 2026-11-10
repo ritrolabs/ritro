@@ -11,6 +11,10 @@ export function queueTagging(bookmarkId: string) {
   return new Client().publishJSON({ url: workerUrl, body: { bookmarkId } });
 }
 
+export function queueAccountDataDeletion(userId: string) {
+  return new Client().publishJSON({ url: `${appUrl}/api/jobs/delete-account-data`, body: { userId } });
+}
+
 // One QStash request for many jobs instead of one request per bookmark
 export function queueTaggingBatch(bookmarkIds: string[]) {
   return new Client().batchJSON(
