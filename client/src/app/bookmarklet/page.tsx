@@ -5,6 +5,8 @@ import BookmarkletSaver from "./BookmarkletSaver";
 export const metadata = {
   title: "Save to Ritro",
   description: "Saving this page to your Ritro archive.",
+  // The address holds the link being saved; don't pass it on as the referrer (GA records referrers)
+  referrer: "no-referrer",
 };
 
 function Logo() {

@@ -77,13 +77,14 @@ export default function AnalyticsConsent() {
   useEffect(() => {
     if (choice === "unknown") return;
     if (choice === "granted") {
-      scriptsLoaded = true;
+      // Skipped pages load nothing, so a withdrawal mustn't reload them (the bookmarklet would save twice)
+      if (!skip) scriptsLoaded = true;
       return;
     }
     // Also on every load without consent: a closing tab's GA can rewrite a cookie after it was cleared
     clearAnalytics();
     if (scriptsLoaded) window.location.reload();
-  }, [choice]);
+  }, [choice, skip]);
 
   if ((!GA_ID && !CLARITY_ID) || skip) return null;
 
