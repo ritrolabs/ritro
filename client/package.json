@@ -14,14 +14,14 @@
     "@prisma/adapter-pg": "^7.10.1",
     "@prisma/client": "^7.10.1",
     "@supabase/ssr": "^0.12.7",
-    "@supabase/supabase-js": "^2.101.1",
+    "@supabase/supabase-js": "^2.119.0",
     "@upstash/qstash": "^2.12.1",
     "@upstash/ratelimit": "^2.2.0",
-    "@upstash/redis": "^1.40.0",
+    "@upstash/redis": "^1.41.0",
     "@vercel/analytics": "^2.0.1",
-    "@vercel/speed-insights": "^2.0.0",
-    "lucide-react": "^1.66.0",
-    "next": "^16.4.3",
+    "@vercel/speed-insights": "^2.1.0",
+    "lucide-react": "^1.70.0",
+    "next": "^16.4.5",
     "open-graph-scraper": "^6.13.0",
     "pg": "^8.23.1",
     "react": "19.3.1",
@@ -37,10 +37,10 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "eslint": "^10",
-    "eslint-config-next": "16.4.3",
+    "eslint-config-next": "16.4.5",
     "prisma": "^7.10.1",
     "tailwindcss": "^4",
     "typescript": "^6",
-    "vitest": "^5.0.5"
+    "vitest": "^5.1.0"
   }
 }
